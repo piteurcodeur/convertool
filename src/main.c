@@ -17,6 +17,18 @@
 
 void SDL_ExitWithError(const char *message);
 void Create_Window(SDL_Window *win, SDL_Renderer *rend);
+void initSDL();
+void doInput();
+void prepareScene();
+void presentScene();
+void cleanup();
+
+typedef struct {
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+} App;
+
+App app;
 
 int main(int argc, char **argv)
 {
@@ -24,48 +36,30 @@ int main(int argc, char **argv)
     SDL_VERSION(&nb);
     printf("Bienvenue sur la SDL %d.%d.%d\n", nb.major, nb.minor, nb.patch);
 
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
     SDL_bool program_launched = SDL_TRUE;
 
-    Create_Window(window, renderer);
+    memset(&app, 0, sizeof(App));
 
-    //Creation du design
-    SDL_Texture *texture = NULL;
-    SDL_Surface *surface = NULL;
-    
+    initSDL();
 
-    
+    atexit(cleanup);
 
     while (program_launched)
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-                case SDL_QUIT:
+        prepareScene();
 
-                    program_launched = SDL_FALSE;
+        doInput();
 
-                    break;
-                
-                default:
-                    break;
-            }
-        }
+        presentScene();
 
-
-        SDL_RenderPresent(renderer);
+        SDL_Delay(16);
     }
-
-
 
     
     /*-------------------------------------------------------------------------*/
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(app.renderer);
+    SDL_DestroyWindow(app.window);
     SDL_Quit();
 
     return EXIT_SUCCESS;
@@ -98,4 +92,70 @@ void Create_Window(SDL_Window *win, SDL_Renderer *rend)
         SDL_ExitWithError("init window and render");
     }
 
+}
+
+void initSDL(void)
+{
+    int rendererFlags, windowFlags;
+
+    rendererFlags = SDL_RENDERER_ACCELERATED;
+
+    windowFlags = 0;
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        SDL_ExitWithError("Couldn't initialize SDL:");
+    }
+
+    app.window = SDL_CreateWindow("Shooter 01", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
+
+    if (!app.window)
+    {
+        SDL_ExitWithError("Failed to open window:");
+    }
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
+    app.renderer = SDL_CreateRenderer(app.window, -1, rendererFlags);
+
+    if (!app.renderer)
+    {
+        SDL_ExitWithError("Failed to create renderer: %s");
+    }
+}
+
+void doInput(void)
+{
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+            case SDL_QUIT:
+                exit(0);
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+void prepareScene(void)
+{
+    SDL_SetRenderDrawColor(app.renderer, 96, 128, 255, 255);
+    SDL_RenderClear(app.renderer);
+}
+
+void presentScene(void)
+{
+    SDL_RenderPresent(app.renderer);
+}
+
+void cleanup()
+{
+    SDL_DestroyRenderer(app.renderer);
+    SDL_DestroyWindow(app.window);
+    SDL_Quit();
 }
