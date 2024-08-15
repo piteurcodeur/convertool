@@ -1,9 +1,18 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stb/stb_image.h>
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+
+/**
+ * @brief 
+ * 
+ * https://wiki.libsdl.org/SDL2/FrontPage
+ * 
+ * @param 
+ */
 
 
 void SDL_ExitWithError(const char *message);
@@ -21,6 +30,10 @@ int main(int argc, char **argv)
 
     Create_Window(window, renderer);
 
+    //Creation du design
+    SDL_Texture *texture = NULL;
+    SDL_Surface *surface = NULL;
+    
 
     
 
@@ -46,7 +59,7 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
     }
 
-    
+
 
     
     /*-------------------------------------------------------------------------*/
