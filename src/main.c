@@ -108,7 +108,7 @@ void initSDL(void)
         SDL_ExitWithError("Couldn't initialize SDL:");
     }
 
-    app.window = SDL_CreateWindow("Shooter 01", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
+    app.window = SDL_CreateWindow("Convertool", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
 
     if (!app.window)
     {
@@ -145,7 +145,7 @@ void doInput(void)
 
 void prepareScene(void)
 {
-    SDL_SetRenderDrawColor(app.renderer, 96, 128, 255, 255);
+    SDL_SetRenderDrawColor(app.renderer, 128, 128, 128, 255);
     SDL_RenderClear(app.renderer);
 }
 
