@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stb/stb_image.h>
+#include <background.h>
+#include <utils.h>
+
+
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -15,13 +19,14 @@
  */
 
 
-void SDL_ExitWithError(const char *message);
+
 void Create_Window(SDL_Window *win, SDL_Renderer *rend);
 void initSDL();
 void doInput();
 void prepareScene();
 void presentScene();
 void cleanup();
+
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -43,12 +48,13 @@ int main(int argc, char **argv)
     initSDL();
     atexit(cleanup);
 
-
+    Color color1 = {255,255,255,255};
 
     while (program_launched)
     {
         prepareScene();
-
+        changeColor(color1, app.renderer);
+        drawline(app.renderer);
         doInput();
 
         presentScene();
@@ -74,12 +80,7 @@ int main(int argc, char **argv)
 //          ./bin/prog
 
 
-void SDL_ExitWithError(const char *message)
-{
-    SDL_Log("ERREUR : %s > %s\n", message, SDL_GetError());
-    SDL_Quit();
-    exit(EXIT_FAILURE);
-}
+
 
 void Create_Window(SDL_Window *win, SDL_Renderer *rend)
 {
