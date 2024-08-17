@@ -3,9 +3,7 @@
 #include <stdlib.h>
 #include <stb/stb_image.h>
 #include <utils.h>
-#include <background.h>
-
-
+#include "background.h"
 
 
    void changeColor(Color _color, SDL_Renderer *_rend)
@@ -16,10 +14,11 @@
         }
    }
 
-   void drawline(SDL_Renderer *_rend)
+   void drawline(SDL_Renderer *_rend, lineCoord _lc)
    {
-       if (SDL_RenderDrawLine(_rend, 50, 50, 500, 500) != 0)
+
+       if (SDL_RenderDrawLine(_rend, _lc.Xstart, _lc.Ystart, _lc.Xend, _lc.Yend) != 0)
        {
-           SDL_ExitWithError("line");
+           SDL_ExitWithError("unable to draw a line");
        }
 }

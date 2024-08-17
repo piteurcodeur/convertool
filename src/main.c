@@ -49,12 +49,13 @@ int main(int argc, char **argv)
     atexit(cleanup);
 
     Color color1 = {255,255,255,255};
+    lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
 
     while (program_launched)
     {
         prepareScene();
         changeColor(color1, app.renderer);
-        drawline(app.renderer);
+        drawline(app.renderer, lineCoord1);
         doInput();
 
         presentScene();
