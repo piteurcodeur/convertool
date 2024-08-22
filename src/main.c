@@ -48,14 +48,19 @@ int main(int argc, char **argv)
     initSDL();
     atexit(cleanup);
 
-    Color color1 = {255,255,255,255};
+    Color WHITE = {255,255,255,255};
+    Color BLACK = {0,0,0,255};
     lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
+    SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
+
+    prepareScene();
+    changeColor (BLACK, app.renderer);
+    //drawline(app.renderer, lineCoord1);
+    drawRect(app.renderer, &rect, SDL_TRUE);
 
     while (program_launched)
     {
-        prepareScene();
-        changeColor(color1, app.renderer);
-        drawline(app.renderer, lineCoord1);
+        
         doInput();
 
         presentScene();
