@@ -34,6 +34,8 @@ typedef struct {
 } App;
 
 App app;
+char *drop_file_dir;
+
 
 int main(int argc, char **argv)
 {
@@ -144,8 +146,15 @@ void doInput(void)
                 exit(0);
                 break;
 
+            case SDL_DROPFILE:
+                drop_file_dir = event.drop.file;
+                printf("%s\n", drop_file_dir);
+                
+                break;
+
             default:
                 break;
+
         }
     }
 }

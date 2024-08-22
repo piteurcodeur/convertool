@@ -6,3 +6,4 @@
 /include/stb/README.md
 /bin/*.o
 /bin/*.exe
+/steps.txt
