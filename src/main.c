@@ -7,8 +7,7 @@
 
 
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+
 
 /**
  * @brief 
@@ -35,6 +34,7 @@ typedef struct {
 
 App app;
 char *drop_file_dir;
+PointerPos ptrP;
 
 
 int main(int argc, char **argv)
@@ -147,9 +147,24 @@ void doInput(void)
                 break;
 
             case SDL_DROPFILE:
-                drop_file_dir = event.drop.file;
-                printf("%s\n", drop_file_dir);
-                
+                if(isDropOnArea(&ptrP))
+                {
+                    drop_file_dir = event.drop.file;
+                    if (isImageFile(drop_file_dir))
+                    {
+                        printf("%s\n", drop_file_dir);
+                    }
+                    else
+                    {
+                        printf("Not an image file\n");
+                    }
+                    
+                    
+                }
+                else{
+                    printf("Drop file outside of the area\n");
+                }
+                   
                 break;
 
             default:
