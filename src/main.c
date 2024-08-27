@@ -5,14 +5,7 @@
 #include <background.h>
 #include <utils.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb/stb_image_write.h>
-
-#include <stb_ico.h>
-
+#include <png2ico/png2ico.h>
 
 
 /**
@@ -31,7 +24,7 @@ void doInput();
 void prepareScene();
 void presentScene();
 void cleanup();
-void loadImage(char* filepath);
+//void loadImage(char* filepath);
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -159,7 +152,8 @@ void doInput(void)
                     if (isImageFile(drop_file_dir))
                     {
                         printf("%s\n", drop_file_dir);
-                        loadImage(drop_file_dir);
+                        //loadImage(drop_file_dir);
+                        c_png2ico(drop_file_dir, "bin/output.ico");
                     }
                     else
                     {
@@ -199,6 +193,7 @@ void cleanup()
     SDL_Quit();
 }
 
+/*
 void loadImage(char *filepath)
 {
     int width, height, channels;
@@ -209,20 +204,35 @@ void loadImage(char *filepath)
         SDL_ExitWithError("Erreur lors du chargement de l'image\n");
     }
 
-    printf("Image chargée: largeur=%d, hauteur=%d, canaux=%d\n", width, height, channels);
+    // Check that the image data is in the expected format
+    if (channels != 3) {
+        fprintf(stderr, "Error: image data is not in RGB format\n");
+        stbi_image_free(img);
+        
+    }
 
+    printf("Image chargée: largeur=%d, hauteur=%d, canaux=%d\n", width, height, channels);
+/*
     if (stbi_write_png("output.png", width, height, channels, img, width * channels)) {
         printf("Image sauvegardée sous 'output.png'\n");
     } else {
         printf("Erreur lors de la sauvegarde de l'image\n");
     }
-
+*/
 /*
     if (save_as_ico("output.ico", width, height, img)) {
         printf("Image sauvegardée sous 'output.ico'\n");
     } else {
         printf("Erreur lors de la sauvegarde de l'image\n");
     }
-*/
+
+
+    if (convert(img, width, height, channels) == 0) {
+        printf("Image sauvegardée sous 'output.ico'\n");
+    } else {
+        printf("Erreur lors de la sauvegarde de l'image\n");
+    }
+    
     stbi_image_free(img);
 }
+*/

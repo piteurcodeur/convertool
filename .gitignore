@@ -6,5 +6,13 @@
 /include/stb/README.md
 /bin/*.o
 /bin/*.exe
+/bin/*.ico
 /steps.txt
 /FreeImage3180.zip
+/commands
+/z_garbage
+/*.ico
+/*.png
+/*.jpg
+/*.jpeg
+/*.bmp
