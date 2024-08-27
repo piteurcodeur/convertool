@@ -153,7 +153,7 @@ void doInput(void)
                     {
                         printf("%s\n", drop_file_dir);
                         //loadImage(drop_file_dir);
-                        c_png2ico(drop_file_dir, "bin/output.ico");
+                        c_png2ico(drop_file_dir, "output.ico");
                     }
                     else
                     {
