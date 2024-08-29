@@ -23,6 +23,7 @@ void initSDL();
 void doInput();
 void prepareScene();
 void presentScene();
+SDL_Surface* createMainSurface(SDL_Window *window);
 void cleanup();
 //void loadImage(char* filepath);
 
@@ -34,6 +35,7 @@ typedef struct {
 App app;
 char *drop_file_dir;
 PointerPos ptrP;
+
 
 
 int main(int argc, char **argv)
@@ -49,15 +51,17 @@ int main(int argc, char **argv)
     initSDL();
     atexit(cleanup);
 
-    Color WHITE = {255,255,255,255};
-    Color BLACK = {0,0,0,255};
+
     lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
     SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
+    //SDL_Surface *MainSurface = createMainSurface(app.window);
 
     prepareScene();
     changeColor (BLACK, app.renderer);
     //drawline(app.renderer, lineCoord1);
     drawRect(app.renderer, &rect, SDL_TRUE);
+  
+    showText(app.renderer);
 
     while (program_launched)
     {
@@ -191,6 +195,18 @@ void cleanup()
     SDL_DestroyRenderer(app.renderer);
     SDL_DestroyWindow(app.window);
     SDL_Quit();
+}
+
+SDL_Surface* createMainSurface(SDL_Window *window) {
+    // Obtenir la surface principale de la fenêtre
+    SDL_Surface* screenSurface = SDL_GetWindowSurface(window);
+    if (!screenSurface) {
+        printf("Erreur lors de l'obtention de la surface de la fenêtre : %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        exit(1); // Utilisez exit(1) pour quitter le programme en cas d'erreur
+    }
+    return screenSurface;
 }
 
 /*

@@ -47,3 +47,4 @@ SDL_bool isImageFile(char *filename) {
 
     return SDL_FALSE;
 }
+

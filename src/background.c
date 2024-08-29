@@ -4,7 +4,11 @@
 #include <stb/stb_image.h>
 #include <utils.h>
 #include "background.h"
+#include "texte.h"
+#include <SDL_ttf.h>
 
+Color WHITE = {255,255,255,255};
+Color BLACK = {0,0,0,255};
 
 void changeColor(Color _color, SDL_Renderer *_rend)
 {
@@ -34,4 +38,11 @@ void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
     }
     }
     
+}
+
+
+void showText(SDL_Renderer *renderer)
+{
+    //Color c = {56,56,125,100};
+    create_texte(renderer, BLACK, 20, 0, 20, "Texte");
 }

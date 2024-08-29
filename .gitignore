@@ -7,6 +7,7 @@
 /bin/*.o
 /bin/*.exe
 /bin/*.ico
+/bin/*.dll
 /steps.txt
 /FreeImage3180.zip
 /commands
@@ -16,3 +17,7 @@
 /*.jpg
 /*.jpeg
 /*.bmp
+/include/freetype
+/include/SDL_ttf.h
+/include/ft2build.h
+/*.zip

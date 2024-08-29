@@ -17,7 +17,7 @@ OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(BIN_DIR)/%.o)
 CFLAGS = -I$(INCLUDE_DIR) -Wall
 
 # Options du linker
-LDFLAGS = -L$(LIB_DIR) -lmingw32 -lSDL2main -lSDL2
+LDFLAGS = -L$(LIB_DIR) -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 # Règle par défaut pour la construction de l'exécutable
 $(BIN_DIR)/$(TARGET): $(OBJ_FILES)
