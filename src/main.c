@@ -25,6 +25,8 @@ void prepareScene();
 void presentScene();
 SDL_Surface* createMainSurface(SDL_Window *window);
 void cleanup();
+SDL_bool isButtonClicked(Button *button, int x, int y);
+void fileDropped(char * drop_file_dir);
 //void loadImage(char* filepath);
 
 typedef struct {
@@ -38,6 +40,9 @@ App app;
 char *drop_file_dir;
 //position du pointeur de souris
 PointerPos ptrP;
+
+Button btn;
+SDL_bool isfileDrop = SDL_FALSE;
 
 
 
@@ -64,6 +69,10 @@ int main(int argc, char **argv)
     //drawline(app.renderer, lineCoord1);
     drawRect(app.renderer, &rect, SDL_TRUE);
     showText(app.renderer, BLACK, 80, 10, 20, "Drag & Drop image file");
+    changeColor (WHITE, app.renderer);
+    SDL_Color black = {BLACK.r, BLACK.g, BLACK.b, BLACK.a};
+    btn = createButton(app.renderer, 10, "bouton", 200, 200, 50, 20, black);
+    drawButton(app.renderer, &btn);
 
     while (program_launched)
     {
@@ -137,6 +146,11 @@ void initSDL(void)
     {
         SDL_ExitWithError("Failed to create renderer: %s");
     }
+
+    if (TTF_Init() < 0) {
+        fprintf(stderr, "Erreur lors de l'initialisation de TTF: %s\n", TTF_GetError());
+        SDL_Quit();
+    }
 }
 
 void doInput(void)
@@ -156,25 +170,8 @@ void doInput(void)
                 {
                     
                     drop_file_dir = event.drop.file;
-                    if (isImageFile(drop_file_dir))
-                    {
-                        printf("%s\n", drop_file_dir);
-                        //loadImage(drop_file_dir);
-                        showText(app.renderer, BLACK, 80, 150, 20, "image loaded");
-
-                        //nom du fichier ico créé
-                        char * newFile = malloc(strlen(drop_file_dir) * sizeof(char));
-
-                        strcpy(newFile, drop_file_dir);
-                        changeTypeName(newFile);
-                        c_png2ico(drop_file_dir, newFile);
-                        free(newFile);
-                    }
-                    else
-                    {
-                        printf("Not an image file\n");
-                    }
-                    
+                    isfileDrop = SDL_TRUE;
+                    fileDropped(drop_file_dir);
                     
                 }
                 else{
@@ -182,12 +179,58 @@ void doInput(void)
                 }
                    
                 break;
+            
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    if(isButtonClicked(&btn, x, y))
+                    {
+                        if (isfileDrop == SDL_TRUE)
+                        {
+                            printf("Conversion du fichier...\n");
+                        }
+                        
+                    }
+                }
 
             default:
                 break;
 
         }
     }
+}
+
+SDL_bool isButtonClicked(Button *button, int x, int y)
+{
+    if (x >= button->rect.x && x <= button->rect.x + button->rect.w && y >= button->rect.y && y <= button->rect.y + button->rect.h)
+    {
+        return SDL_TRUE;
+    }
+    return SDL_FALSE;
+}
+
+void fileDropped(char * drop_file_dir)
+{
+    if (isImageFile(drop_file_dir))
+    {
+        printf("Dropfile : %s\n", drop_file_dir);
+        
+        showText(app.renderer, RED, 80, 150, 20, "image loaded");
+
+        //nom du fichier ico créé
+        char * newFile = malloc(strlen(drop_file_dir) * sizeof(char));
+
+        strcpy(newFile, drop_file_dir);
+        changeTypeName(newFile);
+        c_png2ico(drop_file_dir, newFile);
+        free(newFile);
+    }
+    else
+    {
+        printf("Not an image file\n");
+    }
+
 }
 
 void prepareScene(void)
