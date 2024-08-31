@@ -41,8 +41,8 @@ void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
 }
 
 
-void showText(SDL_Renderer *renderer)
+void showText(SDL_Renderer *renderer, Color _color, int X, int Y, int fontSize, char* texte)
 {
     //Color c = {56,56,125,100};
-    create_texte(renderer, BLACK, 20, 0, 20, "Texte");
+    create_texte(renderer, _color, X, Y, fontSize, texte);
 }

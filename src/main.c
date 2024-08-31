@@ -61,7 +61,6 @@ int main(int argc, char **argv)
     //drawline(app.renderer, lineCoord1);
     drawRect(app.renderer, &rect, SDL_TRUE);
   
-    showText(app.renderer);
 
     while (program_launched)
     {
@@ -157,6 +156,7 @@ void doInput(void)
                     {
                         printf("%s\n", drop_file_dir);
                         //loadImage(drop_file_dir);
+                        showText(app.renderer, BLACK, 20, 20, 20, "image chargée");
                         c_png2ico(drop_file_dir, "output.ico");
                     }
                     else

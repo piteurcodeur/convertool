@@ -26,6 +26,6 @@ extern Color WHITE;
 void changeColor(Color _color, SDL_Renderer *_rend);
 void drawline(SDL_Renderer *_rend, lineCoord _lc);    
 void drawRect(SDL_Renderer *_rend, SDL_Rect *_rect, SDL_bool _fill);     
-void showText(SDL_Renderer *renderer);
+void showText(SDL_Renderer *renderer, Color _color, int X, int Y, int fontSize, char* texte);
 
 #endif // BACKGROUND_H
