@@ -48,3 +48,15 @@ SDL_bool isImageFile(char *filename) {
     return SDL_FALSE;
 }
 
+void changeTypeName(char *filename) {
+    unsigned len = strlen(filename);
+    char *ext = strrchr(filename, '.');
+
+    if (ext != NULL) {
+        // Replace existing extension with ".ico"
+        strcpy(ext, ".ico");
+    } else {
+        // Append ".ico" to the end of the filename
+        snprintf(filename + len, 4, ".ico");
+    }
+}

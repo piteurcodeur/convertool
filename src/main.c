@@ -32,8 +32,11 @@ typedef struct {
     SDL_Window *window;
 } App;
 
+//Application principale
 App app;
+//nom du fichier drop dans la zone
 char *drop_file_dir;
+//position du pointeur de souris
 PointerPos ptrP;
 
 
@@ -60,7 +63,7 @@ int main(int argc, char **argv)
     changeColor (BLACK, app.renderer);
     //drawline(app.renderer, lineCoord1);
     drawRect(app.renderer, &rect, SDL_TRUE);
-  
+    showText(app.renderer, BLACK, 80, 10, 20, "Drag & Drop image file");
 
     while (program_launched)
     {
@@ -151,13 +154,21 @@ void doInput(void)
             case SDL_DROPFILE:
                 if(isDropOnArea(&ptrP))
                 {
+                    
                     drop_file_dir = event.drop.file;
                     if (isImageFile(drop_file_dir))
                     {
                         printf("%s\n", drop_file_dir);
                         //loadImage(drop_file_dir);
-                        showText(app.renderer, BLACK, 20, 20, 20, "image chargée");
-                        c_png2ico(drop_file_dir, "output.ico");
+                        showText(app.renderer, BLACK, 80, 150, 20, "image loaded");
+
+                        //nom du fichier ico créé
+                        char * newFile = malloc(strlen(drop_file_dir) * sizeof(char));
+
+                        strcpy(newFile, drop_file_dir);
+                        changeTypeName(newFile);
+                        c_png2ico(drop_file_dir, newFile);
+                        free(newFile);
                     }
                     else
                     {
