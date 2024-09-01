@@ -20,4 +20,6 @@
 /include/freetype
 /include/SDL_ttf.h
 /include/ft2build.h
+/include/SDL2
+/include/stb
 /*.zip
