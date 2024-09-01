@@ -15,6 +15,10 @@ typedef struct
 void SDL_ExitWithError(const char *message);        
 SDL_bool isDropOnArea(PointerPos *_p);
 SDL_bool isImageFile(char *filename);
-void changeTypeName(char *filename);
+void changeTypeName(char *filename, char* type);
+
+void jpg2png(char *input, char *output);
+
+void convertFile(char *input, char *output);
 
 #endif // UTILS_H

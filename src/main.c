@@ -27,7 +27,7 @@ SDL_Surface* createMainSurface(SDL_Window *window);
 void cleanup();
 SDL_bool isButtonClicked(Button *button, int x, int y);
 void fileDropped(char * drop_file_dir);
-//void loadImage(char* filepath);
+
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -41,7 +41,10 @@ char *drop_file_dir;
 //position du pointeur de souris
 PointerPos ptrP;
 
-Button btn;
+Button btnPNG;
+Button btnICO;
+Button btnJPG;
+
 SDL_bool isfileDrop = SDL_FALSE;
 
 
@@ -60,19 +63,29 @@ int main(int argc, char **argv)
     atexit(cleanup);
 
 
-    lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
+    //lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
     SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
     //SDL_Surface *MainSurface = createMainSurface(app.window);
 
+
+    /*---------------------Préparation de la fenetre----------------------------*/
+
     prepareScene();
     changeColor (BLACK, app.renderer);
-    //drawline(app.renderer, lineCoord1);
+    
     drawRect(app.renderer, &rect, SDL_TRUE);
-    showText(app.renderer, BLACK, 80, 10, 20, "Drag & Drop image file");
+    showText(app.renderer, BLACK, 60, 10, 30, "Drag & Drop image file");
+    showText(app.renderer, BLACK, 500, 10, 30, "Select Format");
     changeColor (WHITE, app.renderer);
     SDL_Color black = {BLACK.r, BLACK.g, BLACK.b, BLACK.a};
-    btn = createButton(app.renderer, 10, "bouton", 200, 200, 50, 20, black);
-    drawButton(app.renderer, &btn);
+
+    //création des boutons de l'interface
+    btnPNG = createButton(app.renderer, 120, "> PNG", 600, 100, 80, 40, black);
+    drawButton(app.renderer, &btnPNG);
+    btnICO = createButton(app.renderer, 120, "> ICO", 600, 200, 80, 40, black);
+    drawButton(app.renderer, &btnICO);
+    btnJPG = createButton(app.renderer, 120, "> JPG", 600, 300, 80, 40, black);
+    drawButton(app.renderer, &btnJPG);
 
     while (program_launched)
     {
@@ -184,7 +197,7 @@ void doInput(void)
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    if(isButtonClicked(&btn, x, y))
+                    if(isButtonClicked(&btnPNG, x, y))
                     {
                         if (isfileDrop == SDL_TRUE)
                         {
@@ -220,10 +233,8 @@ void fileDropped(char * drop_file_dir)
 
         //nom du fichier ico créé
         char * newFile = malloc(strlen(drop_file_dir) * sizeof(char));
-
         strcpy(newFile, drop_file_dir);
-        changeTypeName(newFile);
-        c_png2ico(drop_file_dir, newFile);
+        
         free(newFile);
     }
     else
@@ -262,47 +273,3 @@ SDL_Surface* createMainSurface(SDL_Window *window) {
     }
     return screenSurface;
 }
-
-/*
-void loadImage(char *filepath)
-{
-    int width, height, channels;
-
-    unsigned char *img = stbi_load(filepath, &width, &height, &channels, 0);
-
-    if (img == NULL) {
-        SDL_ExitWithError("Erreur lors du chargement de l'image\n");
-    }
-
-    // Check that the image data is in the expected format
-    if (channels != 3) {
-        fprintf(stderr, "Error: image data is not in RGB format\n");
-        stbi_image_free(img);
-        
-    }
-
-    printf("Image chargée: largeur=%d, hauteur=%d, canaux=%d\n", width, height, channels);
-/*
-    if (stbi_write_png("output.png", width, height, channels, img, width * channels)) {
-        printf("Image sauvegardée sous 'output.png'\n");
-    } else {
-        printf("Erreur lors de la sauvegarde de l'image\n");
-    }
-*/
-/*
-    if (save_as_ico("output.ico", width, height, img)) {
-        printf("Image sauvegardée sous 'output.ico'\n");
-    } else {
-        printf("Erreur lors de la sauvegarde de l'image\n");
-    }
-
-
-    if (convert(img, width, height, channels) == 0) {
-        printf("Image sauvegardée sous 'output.ico'\n");
-    } else {
-        printf("Erreur lors de la sauvegarde de l'image\n");
-    }
-    
-    stbi_image_free(img);
-}
-*/

@@ -1,10 +1,10 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stb/stb_image.h>
 #include <utils.h>
 #include "background.h"
 #include <string.h>
+#include <png2ico/png2ico.h>
 
 DropArea droparea = {0, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
 
@@ -48,15 +48,24 @@ SDL_bool isImageFile(char *filename) {
     return SDL_FALSE;
 }
 
-void changeTypeName(char *filename) {
+void changeTypeName(char *filename, char* type) {
     unsigned len = strlen(filename);
     char *ext = strrchr(filename, '.');
 
     if (ext != NULL) {
         // Replace existing extension with ".ico"
-        strcpy(ext, ".ico");
+        strcpy(ext, type);
     } else {
         // Append ".ico" to the end of the filename
-        snprintf(filename + len, 4, ".ico");
+        snprintf(filename + len, 4, type);
     }
+}
+
+
+
+void convertFile(char *input, char* output)
+{
+    changeTypeName(output, ".ico");
+    c_png2ico(input, output);
+    
 }

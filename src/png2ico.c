@@ -1,10 +1,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <png2ico/png2ico.h>
+#include <utils.h>
 
 #pragma pack(pop)
 
@@ -48,4 +51,32 @@ int c_png2ico(char *input, char* output)
     stbi_image_free(img);
     printf("ICO file created successfully: %s\n", output);
     return 0;
+}
+
+void jpg2png(char *input, char* output)
+{
+    int width, height, channels;
+
+    unsigned char *img = stbi_load(input, &width, &height, &channels, 0);
+
+    if (img == NULL) {
+        SDL_ExitWithError("Erreur lors du chargement de l'image\n");
+    }
+
+    // Check that the image data is in the expected format
+    if (channels != 3) {
+        fprintf(stderr, "Error: image data is not in RGB format\n");
+        stbi_image_free(img);
+        
+    }
+
+    printf("Image chargée: largeur=%d, hauteur=%d, canaux=%d\n", width, height, channels);
+
+    if (stbi_write_png(output, width, height, channels, img, width * channels)) {
+        printf("Image sauvegardée sous 'output.png'\n");
+    } else {
+        printf("Erreur lors de la sauvegarde de l'image\n");
+    }
+
+    stbi_image_free(img);
 }
