@@ -15,22 +15,44 @@
  * 
  */
 
-
-
-
-
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
-#pragma pack(push, 1)
-
+/**
+ * @struct ICONDIR
+ * @brief Structure representing the icon directory
+ * 
+ * @var uint16_t reserved
+ *   Reserved field, must be 0
+ * @var uint16_t type
+ *   Type of the icon (1 for icon, 2 for cursor)
+ * @var uint16_t count
+ *   Number of images in the icon
+ */
 typedef struct {
     uint16_t reserved;
     uint16_t type;
     uint16_t count;
 } ICONDIR;
 
+/**
+ * @struct ICONDIRENTRY
+ * @brief Structure representing an icon directory entry
+ * 
+ * @var uint8_t width
+ *   Width of the image
+ * @var uint8_t height
+ *   Height of the image
+ * @var uint8_t color_count
+ *   Number of colors in the image
+ * @var uint8_t reserved
+ *   Reserved field, must be 0
+ * @var uint16_t planes
+ *   Number of planes in the image
+ * @var uint16_t bit_count
+ *   Number of bits per pixel
+ * @var uint32_t bytes_in_res
+ *   Size of the image data in bytes
+ * @var uint32_t image_offset
+ *   Offset of the image data in the file
+ */
 typedef struct {
     uint8_t width;
     uint8_t height;
@@ -42,6 +64,33 @@ typedef struct {
     uint32_t image_offset;
 } ICONDIRENTRY;
 
+/**
+ * @struct BITMAPINFOHEADER
+ * @brief Structure representing a bitmap information header
+ * 
+ * @var uint32_t size
+ *   Size of the header in bytes
+ * @var uint32_t width
+ *   Width of the image
+ * @var uint32_t height
+ *   Height of the image
+ * @var uint16_t planes
+ *   Number of planes in the image
+ * @var uint16_t bit_count
+ *   Number of bits per pixel
+ * @var uint32_t compression
+ *   Compression type (0 for uncompressed, 1 for RLE-8, 2 for RLE-4)
+ * @var uint32_t image_size
+ *   Size of the image data in bytes
+ * @var uint32_t x_pixels_per_m
+ *   Horizontal resolution in pixels per meter
+ * @var uint32_t y_pixels_per_m
+ *   Vertical resolution in pixels per meter
+ * @var uint32_t colors_used
+ *   Number of colors used in the image
+ * @var uint32_t colors_important
+ *   Number of important colors in the image
+ */
 typedef struct {
     uint32_t size;
     uint32_t width;
@@ -56,6 +105,33 @@ typedef struct {
     uint32_t colors_important;
 } BITMAPINFOHEADER;
 
+/**
+ * @fn int c_png2ico(char *input, char* output)
+ * @brief Convert a PNG image to an ICO image
+ * 
+ * @param input Path to the input PNG image file
+ * @param output Path to the output ICO image file
+ * @return 0 on success, -1 on failure
+ * 
+ */
 int c_png2ico(char *input, char* output);
+
+/**
+ * @fn void c_jpg2png(char *input, char* output)
+ * @brief Convert a JPG image to a PNG image
+ * 
+ * @param input Path to the input JPG image file
+ * @param output Path to the output PNG image file
+ * 
+ */
 void c_jpg2png(char *input, char* output);
+
+/**
+ * @fn void c_png2jpg(char* input, char* output)
+ * @brief Convert a PNG image to a JPG image
+ * 
+ * @param input Path to the input PNG image file
+ * @param output Path to the output PNG image file
+ * 
+ */ 
 void c_png2jpg(char* input, char* output);
