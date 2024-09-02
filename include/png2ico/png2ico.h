@@ -1,5 +1,24 @@
-//#define STB_IMAGE_IMPLEMENTATION
-//#include <../stb/stb_image.h>
+/**
+ * @file png2ico.h
+ * @author piteurcodeur
+ * @brief petite librairie pour convertir des fichiers images en differents types
+ * 
+ * 
+ * @version 0.1
+ * @date 2024-09-03
+ * 
+ * =======================================================================
+ * |                                                                     |
+ * |                            PNG to ICO                               |
+ * |                                                                     |
+ * =======================================================================
+ * 
+ */
+
+
+
+
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
