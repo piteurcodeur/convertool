@@ -17,8 +17,8 @@ SDL_bool isDropOnArea(PointerPos *_p);
 SDL_bool isImageFile(char *filename);
 void changeTypeName(char *filename, char* type);
 
-void jpg2png(char *input, char *output);
 
-void convertFile(char *input, char *output);
+void convertFile(char *input, char* output, char* newType, char* actualType);
 
+void c_jpg2ico(char* input, char* output);
 #endif // UTILS_H

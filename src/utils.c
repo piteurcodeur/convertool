@@ -63,9 +63,41 @@ void changeTypeName(char *filename, char* type) {
 
 
 
-void convertFile(char *input, char* output)
+void convertFile(char *input, char* output, char* newType, char* actualType)
 {
-    changeTypeName(output, ".ico");
-    c_png2ico(input, output);
+    printf("convert %s to %s\n", actualType, newType);
+    if (strcmp(actualType, newType)==0)
+    {
+        return;
+    }
+
+    changeTypeName(output, newType);
     
+    if (strcmp(actualType, ".png")==0 && strcmp(newType, ".ico")==0)
+    {
+        c_png2ico(input, output);
+    }
+    else if (strcmp(actualType, ".jpg")==0 && strcmp(newType, ".ico")==0)
+    {
+        c_jpg2ico(input, output);
+    }
+    else if (strcmp(actualType, ".jpg")==0 && strcmp(newType, ".png")==0)
+    {
+        c_jpg2png(input, output);
+    }
+    else if (strcmp(actualType, ".png")==0 && strcmp(newType, ".jpg")==0)
+    {
+        c_png2jpg(input, output);
+    }
+    else{
+        return;
+    }
+    
+    //free(newFile);
 }
+
+void c_jpg2ico(char* input, char* output)
+{
+    c_png2ico(input, output);
+}
+

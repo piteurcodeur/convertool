@@ -38,4 +38,5 @@ typedef struct {
 } BITMAPINFOHEADER;
 
 int c_png2ico(char *input, char* output);
-void jpg2png(char *input, char* output);
+void c_jpg2png(char *input, char* output);
+void c_png2jpg(char* input, char* output);

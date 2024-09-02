@@ -53,8 +53,9 @@ int c_png2ico(char *input, char* output)
     return 0;
 }
 
-void jpg2png(char *input, char* output)
+void c_jpg2png(char *input, char* output)
 {
+    
     int width, height, channels;
 
     unsigned char *img = stbi_load(input, &width, &height, &channels, 0);
@@ -79,4 +80,9 @@ void jpg2png(char *input, char* output)
     }
 
     stbi_image_free(img);
+}
+
+void c_png2jpg(char* input, char* output)
+{
+    c_jpg2png(input, output);
 }

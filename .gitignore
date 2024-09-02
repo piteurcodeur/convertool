@@ -1,8 +1,4 @@
 /.vscode
-/clean.bat
-/compiler.bat
-/execute.bat
-/test.bat
 /include/stb/README.md
 /bin/*.o
 /bin/*.exe
@@ -20,6 +16,5 @@
 /include/freetype
 /include/SDL_ttf.h
 /include/ft2build.h
-/include/SDL2
-/include/stb
 /*.zip
+/test

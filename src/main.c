@@ -38,6 +38,10 @@ typedef struct {
 App app;
 //nom du fichier drop dans la zone
 char *drop_file_dir;
+//nom du nouveau fichier
+char *newFile;
+//extension du fichier drop
+char *extension;
 //position du pointeur de souris
 PointerPos ptrP;
 
@@ -175,6 +179,8 @@ void doInput(void)
         switch (event.type)
         {
             case SDL_QUIT:
+                TTF_Quit();
+                SDL_Quit();
                 exit(0);
                 break;
 
@@ -197,19 +203,28 @@ void doInput(void)
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    if(isButtonClicked(&btnPNG, x, y))
+                    
+                    if (isfileDrop == SDL_TRUE)
                     {
-                        if (isfileDrop == SDL_TRUE)
+                        if (isButtonClicked(&btnICO,  x, y))
                         {
-                            printf("Conversion du fichier...\n");
+                            printf("Conversion en ico...\n");
+                            convertFile(drop_file_dir, newFile, ".ico", extension);
                         }
-                        
-                    }
+                        else if (isButtonClicked(&btnJPG, x, y))
+                        {
+                            printf("Conversion en jpg...\n");
+                            convertFile(drop_file_dir, newFile, ".jpg", extension);
+                        }
+                        else if (isButtonClicked(&btnPNG, x, y))
+                        {
+                            printf("Conversion en png...\n");
+                            convertFile(drop_file_dir, newFile, ".png", extension);
+                        }   
+                    }                        
                 }
-
             default:
                 break;
-
         }
     }
 }
@@ -223,19 +238,22 @@ SDL_bool isButtonClicked(Button *button, int x, int y)
     return SDL_FALSE;
 }
 
+//allocation mémoire nouveau fichier
 void fileDropped(char * drop_file_dir)
 {
     if (isImageFile(drop_file_dir))
     {
         printf("Dropfile : %s\n", drop_file_dir);
         
-        showText(app.renderer, RED, 80, 150, 20, "image loaded");
+        extension = strrchr(drop_file_dir, '.');
 
+        showText(app.renderer, RED, 80, 150, 20, "image loaded");
+        showText(app.renderer, BLACK, 80, 250, 20, extension);
         //nom du fichier ico créé
-        char * newFile = malloc(strlen(drop_file_dir) * sizeof(char));
+        newFile = malloc(strlen(drop_file_dir) * sizeof(char));
         strcpy(newFile, drop_file_dir);
         
-        free(newFile);
+        //free(newFile);
     }
     else
     {
