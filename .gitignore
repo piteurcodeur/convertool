@@ -18,5 +18,7 @@
 /include/ft2build.h
 /*.zip
 /test
-/include/stb
-/include/SDL2
+/include/stb/*
+/include/SDL2/*
+/share/*
+/lib/*
