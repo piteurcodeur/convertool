@@ -1,9 +1,6 @@
 /.vscode
 /include/stb/README.md
-/bin/*.o
-/bin/*.exe
-/bin/*.ico
-/bin/*.dll
+/bin/*
 /steps.txt
 /FreeImage3180.zip
 /commands
