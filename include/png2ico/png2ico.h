@@ -1,7 +1,7 @@
 /**
  * @file png2ico.h
  * @author piteurcodeur
- * @brief petite librairie pour convertir des fichiers images en differents types
+ * @brief little lib to cenvert image files in different types
  * 
  * 
  * @version 0.1
