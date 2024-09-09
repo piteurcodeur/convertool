@@ -9,7 +9,7 @@
 #include <png2ico/png2ico.h>
 #include <utils.h>
 
-#pragma pack(pop)
+#pragma pack(push)
 
 int c_png2ico(char *input, char* output)
 {
@@ -86,3 +86,5 @@ void c_png2jpg(char* input, char* output)
 {
     c_jpg2png(input, output);
 }
+
+#pragma pack(pop)

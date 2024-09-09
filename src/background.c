@@ -11,6 +11,7 @@ Color WHITE = {255,255,255,255};
 Color BLACK = {0,0,0,255};
 Color RED = {255,0,0,255};
 
+
 void changeColor(Color _color, SDL_Renderer *_rend)
 {
     if (SDL_SetRenderDrawColor(_rend, _color.r, _color.g, _color.b, SDL_ALPHA_OPAQUE) != 0)
@@ -40,7 +41,10 @@ void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
     }
     else
     {
-        /* code */
+        if (SDL_RenderDrawRect(_rend, _rect) != 0)
+        {
+            SDL_ExitWithError("unable to draw rectangle");
+        }
     }
     
     
@@ -51,6 +55,10 @@ void showText(SDL_Renderer *renderer, Color _color, int X, int Y, int fontSize, 
 {
     //Color c = {56,56,125,100};
     create_texte(renderer, _color, X, Y, fontSize, texte);
+
+    //initFonts("C:/Windows/Fonts/arial.ttf", fontSize);
+    //SDL_Texture *_t = getTextTexture("hello world", "C:/Windows/Fonts/arial.ttf", renderer);
+    //blit(renderer, X, Y, 50, 50, _t);
 }
 
 
@@ -63,7 +71,7 @@ Button createButton(SDL_Renderer* renderer, int fontSize, const char* text, int 
         SDL_Quit();
     }
 
-    TTF_Font* font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", fontSize);;
+    TTF_Font* font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", fontSize);
     Button button;
     button.rect = (SDL_Rect){x, y, w, h};
     button.font = font;

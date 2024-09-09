@@ -6,7 +6,7 @@
 #include <utils.h>
 
 #include <png2ico/png2ico.h>
-
+#include <string.h>
 
 /**
  * @brief 
@@ -16,6 +16,7 @@
  * @param 
  */
 
+#define NUMBER_FPS 60
 
 
 void Create_Window(SDL_Window *win, SDL_Renderer *rend);
@@ -50,7 +51,7 @@ Button btnICO;
 Button btnJPG;
 
 SDL_bool isfileDrop = SDL_FALSE;
-
+int tick, fps, tickStart, tickEnd, diffTicks = 0;
 
 
 int main(int argc, char **argv)
@@ -91,14 +92,32 @@ int main(int argc, char **argv)
     btnJPG = createButton(app.renderer, 120, "> JPG", 600, 300, 80, 40, black);
     drawButton(app.renderer, &btnJPG);
 
+    /*___________test text______________*/
+    
+    tick = SDL_GetTicks();
+
     while (program_launched)
     {
+        tickStart = SDL_GetTicks();
         
         doInput();
 
         presentScene();
 
-        SDL_Delay(16);
+        
+        if(SDL_GetTicks() < tick + 1000)
+        {
+            fps++;
+        }
+        else
+        {
+            printf("FPS : %d\n", fps);
+            tick = SDL_GetTicks();
+            fps = 0;
+        }
+        tickEnd = SDL_GetTicks();
+        diffTicks = (tickEnd - tickStart) > 16 ? 16 : (tickEnd - tickStart);
+        SDL_Delay(16 - diffTicks);
     }
 
     
@@ -179,6 +198,7 @@ void doInput(void)
         switch (event.type)
         {
             case SDL_QUIT:
+                printf("Programme ferme\n");
                 TTF_Quit();
                 SDL_Quit();
                 exit(0);
