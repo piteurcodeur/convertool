@@ -159,6 +159,7 @@ void drawButton2(SDL_Renderer* renderer, Button2* btn) {
         currentBgColor.r = (Uint8)(currentBgColor.r * 0.8);
         currentBgColor.g = (Uint8)(currentBgColor.g * 0.8);
         currentBgColor.b = (Uint8)(currentBgColor.b * 0.8);
+        
     } else if (btn->isHovered) {
         currentBgColor.r = (Uint8)(btn->hoverColor.r);
         currentBgColor.g = (Uint8)(btn->hoverColor.g);
@@ -166,6 +167,10 @@ void drawButton2(SDL_Renderer* renderer, Button2* btn) {
 
         btn->textColor = (SDL_Color){0,0,0,255};
     }
+    else{
+        btn->textColor = (SDL_Color){255,255,255,255};
+    }
+    
 
     SDL_SetRenderDrawColor(renderer, currentBgColor.r, currentBgColor.g, currentBgColor.b, currentBgColor.a);
     SDL_RenderFillRect(renderer, &btn->rect);

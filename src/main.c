@@ -29,8 +29,8 @@ SDL_Surface* createMainSurface(SDL_Window *window);
 void cleanup();
 SDL_bool isButtonClicked(Button2 *button, int x, int y);
 void fileDropped(char * drop_file_dir);
-void handleButtonClick(Button2* btn, const char* buttonName);
-
+void handleButtonClick(Button2* btn, char* buttonName);
+void cleanElt();
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -277,7 +277,7 @@ void doInput(void)
     }
 }
 
-void handleButtonClick(Button2* btn, const char* buttonName) {
+void handleButtonClick(Button2* btn, char* buttonName) {
     if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
         printf("Button %s clicked!\n", buttonName);
         convertFile(drop_file_dir, newFile, buttonName, extension);
@@ -285,6 +285,24 @@ void handleButtonClick(Button2* btn, const char* buttonName) {
     
     btn->isPressed = false;
 }
+
+void cleanElt()
+{
+        if (drop_file_dir != NULL) {
+            SDL_free(drop_file_dir);
+            drop_file_dir = NULL;
+        }
+        if (newFile != NULL) {
+            SDL_free(newFile);
+            newFile = NULL;
+        }
+        if (extension != NULL) {
+            SDL_free(extension);
+            extension = NULL;
+        }
+}
+
+
 
 SDL_bool isButtonClicked(Button2 *button, int x, int y)
 {
@@ -315,7 +333,7 @@ void fileDropped(char * drop_file_dir)
         strcpy(buff, msg);
         strcat(buff, extension);
         
-        showText(app.renderer, BLACK, 80, 250, 20, buff);
+        showText(app.renderer, BLACK, 100, 250, 20, buff);
 
         //nom du fichier ico créé
         newFile = malloc(strlen(drop_file_dir) * sizeof(char));
@@ -347,6 +365,7 @@ void presentScene(void)
 
 void cleanup()
 {
+    cleanElt();
     SDL_DestroyRenderer(app.renderer);
     SDL_DestroyWindow(app.window);
     SDL_Quit();
