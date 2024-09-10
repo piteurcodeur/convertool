@@ -84,7 +84,34 @@ void c_jpg2png(char *input, char* output)
 
 void c_png2jpg(char* input, char* output)
 {
-    c_jpg2png(input, output);
+    int width, height, channels;
+    unsigned char *img = stbi_load(input, &width, &height, &channels, 0);
+    
+    if(img == NULL) {
+        printf("Erreur lors du chargement de l'image\n");
+        return;
+    }
+    
+    // Convertir en RGB si l'image est en RGBA
+    if(channels == 4) {
+        unsigned char *rgb_img = malloc(width * height * 3);
+        for(int i = 0; i < width * height; i++) {
+            rgb_img[i*3] = img[i*4];
+            rgb_img[i*3+1] = img[i*4+1];
+            rgb_img[i*3+2] = img[i*4+2];
+        }
+        stbi_image_free(img);
+        img = rgb_img;
+        channels = 3;
+    }
+    
+    int success = stbi_write_jpg(output, width, height, channels, img, 90);
+    
+    if(!success) {
+        printf("Erreur lors de l'écriture de l'image JPG\n");
+    }
+    
+    stbi_image_free(img);
 }
 
 #pragma pack(pop)

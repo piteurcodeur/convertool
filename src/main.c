@@ -247,8 +247,6 @@ void doInput(void)
             
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    int x, y;
-                    SDL_GetMouseState(&x, &y);
                     
                     if (isfileDrop == SDL_TRUE)
                     {
@@ -256,33 +254,16 @@ void doInput(void)
                         {
                             btnICO.isPressed = isPointInRect(event.button.x, event.button.y, &btnICO.rect);
                             btnPNG.isPressed = isPointInRect(event.button.x, event.button.y, &btnPNG.rect);
-                            btnJPG.isPressed = isPointInRect(event.button.x, event.button.y, &btnJPG.rect);
-                            if (btnICO.isPressed)
-                            {
-                                printf("Conversion en ico...\n");
-                                convertFile(drop_file_dir, newFile, ".ico", extension);
-                            }
-                            else if (btnJPG.isPressed)
-                            {
-                                printf("Conversion en jpg...\n");
-                                convertFile(drop_file_dir, newFile, ".jpg", extension);
-                            }
-                            else if (btnPNG.isPressed)
-                            {
-                                printf("Conversion en png...\n");
-                                convertFile(drop_file_dir, newFile, ".png", extension);
-                            }  
-                        } 
-                         
-                    }  
-                                         
+                            btnJPG.isPressed = isPointInRect(event.button.x, event.button.y, &btnJPG.rect);  
+                        }   
+                    }                         
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    handleButtonClick(&btnICO, "ICO");
-                    handleButtonClick(&btnPNG, "PNG");
-                    handleButtonClick(&btnJPG, "JPG");
+                    handleButtonClick(&btnICO, ".ico");
+                    handleButtonClick(&btnPNG, ".png");
+                    handleButtonClick(&btnJPG, ".jpg");
                 }
                 break;
             case SDL_MOUSEMOTION:
@@ -298,8 +279,10 @@ void doInput(void)
 
 void handleButtonClick(Button2* btn, const char* buttonName) {
     if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
-        printf("Bouton %s cliqué!\n", buttonName);
+        printf("Button %s clicked!\n", buttonName);
+        convertFile(drop_file_dir, newFile, buttonName, extension);
     }
+    
     btn->isPressed = false;
 }
 
@@ -319,10 +302,10 @@ void fileDropped(char * drop_file_dir)
     {
         printf("Dropfile : %s\n", drop_file_dir);
 
-        char *msg = "extension : ";
+        char *msg = "> Extension : ";
         extension = strrchr(drop_file_dir, '.');
 
-        showText(app.renderer, RED, 100, 150, 24, "Image loaded");
+        showText(app.renderer, RED, 100, 150, 24, "> Image loaded");
 
         size_t total_length = strlen(msg) + strlen(extension) + 1; // +1 pour le caractère nul
         char *buff = (char *)malloc(total_length);
