@@ -15,6 +15,9 @@
  * 
  */
 
+#ifndef PNG2ICO_H
+#define PNG2ICO_H
+#
 /**
  * @struct ICONDIR
  * @brief Structure representing the icon directory
@@ -90,3 +93,4 @@ void c_jpg2png(char *input, char* output);
  */ 
 void c_png2jpg(char* input, char* output);
 
+#endif //PNG2ICO_H

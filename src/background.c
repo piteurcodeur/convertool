@@ -7,12 +7,12 @@
 #include "texte.h"
 #include <SDL_ttf.h>
 
-Color WHITE = {255,255,255,255};
-Color BLACK = {0,0,0,255};
-Color RED = {255,0,0,255};
+SDL_Color WHITE = {255,255,255,255};
+SDL_Color BLACK = {0,0,0,255};
+SDL_Color RED = {255,0,0,255};
 
 
-void changeColor(Color _color, SDL_Renderer *_rend)
+void changeColor(SDL_Color _color, SDL_Renderer *_rend)
 {
     if (SDL_SetRenderDrawColor(_rend, _color.r, _color.g, _color.b, SDL_ALPHA_OPAQUE) != 0)
     {
@@ -51,14 +51,34 @@ void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
 }
 
 
-void showText(SDL_Renderer *renderer, Color _color, int X, int Y, int fontSize, char* texte)
+void showText(SDL_Renderer *renderer, SDL_Color _color, int X, int Y, int fontSize, char* texte)
 {
     //Color c = {56,56,125,100};
-    create_texte(renderer, _color, X, Y, fontSize, texte);
+    //create_texte(renderer, _color, X, Y, fontSize, texte);
 
-    //initFonts("C:/Windows/Fonts/arial.ttf", fontSize);
-    //SDL_Texture *_t = getTextTexture("hello world", "C:/Windows/Fonts/arial.ttf", renderer);
-    //blit(renderer, X, Y, 50, 50, _t);
+    TTF_Font* Font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", fontSize);
+    if (!Font) {
+        printf("Erreur de création de la police : %s\n", TTF_GetError());
+        TTF_Quit();
+        exit(1);
+    }
+
+    TextStyle style = {
+        .font = Font,
+        .color = _color, // Blanc
+        .size = fontSize,
+        .bold = false,
+        .italic = false,
+        .underline = false
+    };
+    SDL_Rect rect = {X, Y, 0, 0};
+    
+    SDL_Texture* textTexture = renderText(renderer, texte, style, &rect);
+        
+    if (textTexture) {
+        SDL_RenderCopy(renderer, textTexture, NULL, &rect);
+        SDL_DestroyTexture(textTexture);
+    }
 }
 
 

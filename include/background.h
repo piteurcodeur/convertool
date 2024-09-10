@@ -4,9 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 
-typedef struct{
-    Uint8 r, g, b, a;
-} Color;
 
 typedef struct{
     int Xstart;
@@ -28,9 +25,9 @@ typedef struct {
     const char* text;
 } Button;
 
-extern Color BLACK;
-extern Color WHITE;
-extern Color RED;
+extern SDL_Color BLACK;
+extern SDL_Color WHITE;
+extern SDL_Color RED;
 
 /**
  * @brief changer la couleur SDL active sur le rendu
@@ -38,7 +35,7 @@ extern Color RED;
  * @param _color structure couleur RGBa
  * @param _rend le rendu SDL
  */
-void changeColor(Color _color, SDL_Renderer *_rend);
+void changeColor(SDL_Color _color, SDL_Renderer *_rend);
 
 /**
  * @brief dessiner une ligne sur un renderer
@@ -67,7 +64,7 @@ void drawRect(SDL_Renderer *_rend, SDL_Rect *_rect, SDL_bool _fill);
  * @param fontSize taille du texte
  * @param texte texte à afficher
  */
-void showText(SDL_Renderer *renderer, Color _color, int X, int Y, int fontSize, char* texte);
+void showText(SDL_Renderer *renderer, SDL_Color _color, int X, int Y, int fontSize, char* texte);
 
 /**
  * @brief Créer un objet Button

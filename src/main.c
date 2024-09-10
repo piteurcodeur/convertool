@@ -7,6 +7,7 @@
 
 #include <png2ico/png2ico.h>
 #include <string.h>
+#include <texte.h>
 
 /**
  * @brief 
@@ -16,7 +17,7 @@
  * @param 
  */
 
-#define NUMBER_FPS 60
+#define NUMBER_FPS 100
 
 
 void Create_Window(SDL_Window *win, SDL_Renderer *rend);
@@ -26,8 +27,9 @@ void prepareScene();
 void presentScene();
 SDL_Surface* createMainSurface(SDL_Window *window);
 void cleanup();
-SDL_bool isButtonClicked(Button *button, int x, int y);
+SDL_bool isButtonClicked(Button2 *button, int x, int y);
 void fileDropped(char * drop_file_dir);
+void handleButtonClick(Button2* btn, const char* buttonName);
 
 
 typedef struct {
@@ -46,9 +48,13 @@ char *extension;
 //position du pointeur de souris
 PointerPos ptrP;
 
-Button btnPNG;
-Button btnICO;
-Button btnJPG;
+SDL_Event event;
+
+Button2 btnPNG;
+Button2 btnICO;
+Button2 btnJPG;
+//Button2 btnICO;
+TTF_Font *font;
 
 SDL_bool isfileDrop = SDL_FALSE;
 int tick, fps, tickStart, tickEnd, diffTicks = 0;
@@ -82,42 +88,63 @@ int main(int argc, char **argv)
     showText(app.renderer, BLACK, 60, 10, 30, "Drag & Drop image file");
     showText(app.renderer, BLACK, 500, 10, 30, "Select Format");
     changeColor (WHITE, app.renderer);
-    SDL_Color black = {BLACK.r, BLACK.g, BLACK.b, BLACK.a};
+    
 
     //création des boutons de l'interface
+    /*
     btnPNG = createButton(app.renderer, 120, "> PNG", 600, 100, 80, 40, black);
     drawButton(app.renderer, &btnPNG);
     btnICO = createButton(app.renderer, 120, "> ICO", 600, 200, 80, 40, black);
     drawButton(app.renderer, &btnICO);
     btnJPG = createButton(app.renderer, 120, "> JPG", 600, 300, 80, 40, black);
     drawButton(app.renderer, &btnJPG);
+    */
+
+    font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
+    btnPNG = createButton2(500, 100, 200, 50, "> PNG", font, 
+                                   (SDL_Color){100, 100, 255, 255},  // Bleu clair
+                                   (SDL_Color){255, 255, 255, 255},
+                                   (SDL_Color){0, 255, 255, 255}); // Blanc
+    btnICO = createButton2(500, 200, 200, 50, "> ICO", font, 
+                                   (SDL_Color){100, 100, 255, 255},  // Bleu clair
+                                   (SDL_Color){255, 255, 255, 255},
+                                   (SDL_Color){0, 255, 255, 255}); // Blanc
+    btnJPG = createButton2(500, 300, 200, 50, "> JPG", font, 
+                                   (SDL_Color){100, 100, 255, 255},  // Bleu clair
+                                   (SDL_Color){255, 255, 255, 255},
+                                   (SDL_Color){0, 255, 255, 255}); // Blanc
+    
 
     /*___________test text______________*/
     
     tick = SDL_GetTicks();
 
+    int frameDelay = 1000 / NUMBER_FPS;
+
     while (program_launched)
     {
         tickStart = SDL_GetTicks();
-        
-        doInput();
 
+        doInput();     
         presentScene();
 
-        
-        if(SDL_GetTicks() < tick + 1000)
+        if (SDL_GetTicks() < tick + 1000)
         {
             fps++;
         }
         else
         {
             printf("FPS : %d\n", fps);
-            tick = SDL_GetTicks();
-            fps = 0;
+            tick = SDL_GetTicks(); 
+            fps = 0;               
         }
         tickEnd = SDL_GetTicks();
-        diffTicks = (tickEnd - tickStart) > 16 ? 16 : (tickEnd - tickStart);
-        SDL_Delay(16 - diffTicks);
+
+        diffTicks = (tickEnd - tickStart);
+        if (diffTicks < frameDelay)
+        {
+            SDL_Delay(frameDelay - diffTicks);
+        }
     }
 
     
@@ -191,7 +218,6 @@ void initSDL(void)
 
 void doInput(void)
 {
-    SDL_Event event;
 
     while (SDL_PollEvent(&event))
     {
@@ -226,30 +252,58 @@ void doInput(void)
                     
                     if (isfileDrop == SDL_TRUE)
                     {
-                        if (isButtonClicked(&btnICO,  x, y))
+                        if (event.button.button == SDL_BUTTON_LEFT)
                         {
-                            printf("Conversion en ico...\n");
-                            convertFile(drop_file_dir, newFile, ".ico", extension);
-                        }
-                        else if (isButtonClicked(&btnJPG, x, y))
-                        {
-                            printf("Conversion en jpg...\n");
-                            convertFile(drop_file_dir, newFile, ".jpg", extension);
-                        }
-                        else if (isButtonClicked(&btnPNG, x, y))
-                        {
-                            printf("Conversion en png...\n");
-                            convertFile(drop_file_dir, newFile, ".png", extension);
-                        }   
-                    }                        
+                            btnICO.isPressed = isPointInRect(event.button.x, event.button.y, &btnICO.rect);
+                            btnPNG.isPressed = isPointInRect(event.button.x, event.button.y, &btnPNG.rect);
+                            btnJPG.isPressed = isPointInRect(event.button.x, event.button.y, &btnJPG.rect);
+                            if (btnICO.isPressed)
+                            {
+                                printf("Conversion en ico...\n");
+                                convertFile(drop_file_dir, newFile, ".ico", extension);
+                            }
+                            else if (btnJPG.isPressed)
+                            {
+                                printf("Conversion en jpg...\n");
+                                convertFile(drop_file_dir, newFile, ".jpg", extension);
+                            }
+                            else if (btnPNG.isPressed)
+                            {
+                                printf("Conversion en png...\n");
+                                convertFile(drop_file_dir, newFile, ".png", extension);
+                            }  
+                        } 
+                         
+                    }  
+                                         
                 }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    handleButtonClick(&btnICO, "ICO");
+                    handleButtonClick(&btnPNG, "PNG");
+                    handleButtonClick(&btnJPG, "JPG");
+                }
+                break;
+            case SDL_MOUSEMOTION:
+                btnICO.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnICO.rect);
+                btnPNG.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnPNG.rect);
+                btnJPG.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnJPG.rect);                
+                break;
             default:
                 break;
         }
     }
 }
 
-SDL_bool isButtonClicked(Button *button, int x, int y)
+void handleButtonClick(Button2* btn, const char* buttonName) {
+    if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
+        printf("Bouton %s cliqué!\n", buttonName);
+    }
+    btn->isPressed = false;
+}
+
+SDL_bool isButtonClicked(Button2 *button, int x, int y)
 {
     if (x >= button->rect.x && x <= button->rect.x + button->rect.w && y >= button->rect.y && y <= button->rect.y + button->rect.h)
     {
@@ -264,22 +318,33 @@ void fileDropped(char * drop_file_dir)
     if (isImageFile(drop_file_dir))
     {
         printf("Dropfile : %s\n", drop_file_dir);
-        
+
+        char *msg = "extension : ";
         extension = strrchr(drop_file_dir, '.');
 
-        showText(app.renderer, RED, 80, 150, 20, "image loaded");
-        showText(app.renderer, BLACK, 80, 250, 20, extension);
+        showText(app.renderer, RED, 100, 150, 24, "Image loaded");
+
+        size_t total_length = strlen(msg) + strlen(extension) + 1; // +1 pour le caractère nul
+        char *buff = (char *)malloc(total_length);
+        if (buff == NULL) {
+            fprintf(stderr, "Échec de l'allocation de mémoire\n");
+        }
+        strcpy(buff, msg);
+        strcat(buff, extension);
+        
+        showText(app.renderer, BLACK, 80, 250, 20, buff);
+
         //nom du fichier ico créé
         newFile = malloc(strlen(drop_file_dir) * sizeof(char));
         strcpy(newFile, drop_file_dir);
         
         //free(newFile);
+        free(buff);
     }
     else
     {
         printf("Not an image file\n");
     }
-
 }
 
 void prepareScene(void)
@@ -290,6 +355,10 @@ void prepareScene(void)
 
 void presentScene(void)
 {
+    //draw interactive elements
+    drawButton2(app.renderer, &btnICO);
+    drawButton2(app.renderer, &btnPNG);
+    drawButton2(app.renderer, &btnJPG);
     SDL_RenderPresent(app.renderer);
 }
 
