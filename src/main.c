@@ -47,13 +47,13 @@ char *newFile;
 char *extension;
 //position du pointeur de souris
 PointerPos ptrP;
-
+//handle les evenements
 SDL_Event event;
 
 Button2 btnPNG;
 Button2 btnICO;
 Button2 btnJPG;
-//Button2 btnICO;
+
 TTF_Font *font;
 
 SDL_bool isfileDrop = SDL_FALSE;
@@ -88,17 +88,6 @@ int main(int argc, char **argv)
     showText(app.renderer, BLACK, 60, 10, 30, "Drag & Drop image file");
     showText(app.renderer, BLACK, 500, 10, 30, "Select Format");
     changeColor (WHITE, app.renderer);
-    
-
-    //création des boutons de l'interface
-    /*
-    btnPNG = createButton(app.renderer, 120, "> PNG", 600, 100, 80, 40, black);
-    drawButton(app.renderer, &btnPNG);
-    btnICO = createButton(app.renderer, 120, "> ICO", 600, 200, 80, 40, black);
-    drawButton(app.renderer, &btnICO);
-    btnJPG = createButton(app.renderer, 120, "> JPG", 600, 300, 80, 40, black);
-    drawButton(app.renderer, &btnJPG);
-    */
 
     font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
     btnPNG = createButton2(500, 100, 200, 50, "> PNG", font, 
@@ -181,6 +170,7 @@ void Create_Window(SDL_Window *win, SDL_Renderer *rend)
 
 }
 
+//Initialisation SDL2 et TTF
 void initSDL(void)
 {
     int rendererFlags, windowFlags;
@@ -216,6 +206,7 @@ void initSDL(void)
     }
 }
 
+//Handle tous les evenements
 void doInput(void)
 {
 
@@ -277,6 +268,7 @@ void doInput(void)
     }
 }
 
+//Handle le clic puis lance la conversion dans le format en paramètre
 void handleButtonClick(Button2* btn, char* buttonName) {
     if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
         printf("Button %s clicked!\n", buttonName);
@@ -286,22 +278,22 @@ void handleButtonClick(Button2* btn, char* buttonName) {
     btn->isPressed = false;
 }
 
+//Libère les pointeurs pour fermer l'app
 void cleanElt()
 {
-        if (drop_file_dir != NULL) {
-            SDL_free(drop_file_dir);
-            drop_file_dir = NULL;
-        }
-        if (newFile != NULL) {
-            SDL_free(newFile);
-            newFile = NULL;
-        }
-        if (extension != NULL) {
-            SDL_free(extension);
-            extension = NULL;
-        }
+    destroyButton(&btnICO);
+    destroyButton(&btnJPG);
+    destroyButton(&btnPNG);
+    
+    if (newFile != NULL) {
+        SDL_free(newFile);
+        newFile = NULL;
+    }
+    if (drop_file_dir != NULL) {
+        SDL_free(drop_file_dir);
+        drop_file_dir = NULL;
+    }
 }
-
 
 
 SDL_bool isButtonClicked(Button2 *button, int x, int y)
@@ -313,7 +305,7 @@ SDL_bool isButtonClicked(Button2 *button, int x, int y)
     return SDL_FALSE;
 }
 
-//allocation mémoire nouveau fichier
+//Allocation mémoire nouveau fichier
 void fileDropped(char * drop_file_dir)
 {
     if (isImageFile(drop_file_dir))
@@ -326,6 +318,7 @@ void fileDropped(char * drop_file_dir)
         showText(app.renderer, RED, 100, 150, 24, "> Image loaded");
 
         size_t total_length = strlen(msg) + strlen(extension) + 1; // +1 pour le caractère nul
+        //Buffer pour le message
         char *buff = (char *)malloc(total_length);
         if (buff == NULL) {
             fprintf(stderr, "Échec de l'allocation de mémoire\n");
@@ -335,11 +328,10 @@ void fileDropped(char * drop_file_dir)
         
         showText(app.renderer, BLACK, 100, 250, 20, buff);
 
-        //nom du fichier ico créé
+        //Nom du fichier ico créé
         newFile = malloc(strlen(drop_file_dir) * sizeof(char));
         strcpy(newFile, drop_file_dir);
         
-        //free(newFile);
         free(buff);
     }
     else
@@ -348,21 +340,24 @@ void fileDropped(char * drop_file_dir)
     }
 }
 
+//Change color and clear render
 void prepareScene(void)
 {
     SDL_SetRenderDrawColor(app.renderer, 128, 128, 128, 255);
     SDL_RenderClear(app.renderer);
 }
 
+//Draw interactive elements and update screen
 void presentScene(void)
 {
-    //draw interactive elements
+    
     drawButton2(app.renderer, &btnICO);
     drawButton2(app.renderer, &btnPNG);
     drawButton2(app.renderer, &btnJPG);
     SDL_RenderPresent(app.renderer);
 }
 
+//Clean before leaving
 void cleanup()
 {
     cleanElt();
@@ -371,6 +366,7 @@ void cleanup()
     SDL_Quit();
 }
 
+//Create a mainSurface on the main Window
 SDL_Surface* createMainSurface(SDL_Window *window) {
     // Obtenir la surface principale de la fenêtre
     SDL_Surface* screenSurface = SDL_GetWindowSurface(window);

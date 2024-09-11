@@ -1,7 +1,7 @@
 /**
  * @file png2ico.h
  * @author piteurcodeur
- * @brief little lib to cenvert image files in different types
+ * @brief little lib to convert image files in different types
  * 
  * 
  * @version 0.1
@@ -17,7 +17,7 @@
 
 #ifndef PNG2ICO_H
 #define PNG2ICO_H
-#
+
 /**
  * @struct ICONDIR
  * @brief Structure representing the icon directory
