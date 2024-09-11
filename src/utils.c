@@ -6,6 +6,7 @@
 #include <string.h>
 #include <png2ico/png2ico.h>
 
+//DropArea droparea = {0, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
 DropArea droparea = {0, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
 
 
@@ -16,11 +17,11 @@ void SDL_ExitWithError(const char *message)
     exit(EXIT_FAILURE);
 }
 
-SDL_bool isDropOnArea(PointerPos *_p)
+SDL_bool isDropOnArea(PointerPos *_p, SDL_Rect _rect)
 {
     SDL_GetMouseState(&(_p->x), &(_p->y));
 
-    if(_p->x < droparea.maxX && _p->x > droparea.minX && _p->y < droparea.maxY && _p->y > droparea.minY)
+    if(_p->x < (_rect.x+_rect.w)&& _p->x > _rect.x && _p->y < (_rect.y+_rect.h) && _p->y > _rect.y)
     {
         return SDL_TRUE;
     }

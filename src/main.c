@@ -40,11 +40,11 @@ typedef struct {
 //Application principale
 App app;
 //nom du fichier drop dans la zone
-char *drop_file_dir;
+char *drop_file_dir = NULL;
 //nom du nouveau fichier
-char *newFile;
+char *newFile = NULL;
 //extension du fichier drop
-char *extension;
+char *extension = NULL;
 //position du pointeur de souris
 PointerPos ptrP;
 //handle les evenements
@@ -53,6 +53,7 @@ SDL_Event event;
 Button2 btnPNG;
 Button2 btnICO;
 Button2 btnJPG;
+SDL_Rect rectDrop = {40, 60, WINDOW_WIDTH/2 - 2*40, WINDOW_HEIGHT - 2*60};
 
 TTF_Font *font;
 
@@ -76,6 +77,7 @@ int main(int argc, char **argv)
 
     //lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
     SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
+    
     //SDL_Surface *MainSurface = createMainSurface(app.window);
 
 
@@ -84,9 +86,11 @@ int main(int argc, char **argv)
     prepareScene();
     changeColor (BLACK, app.renderer);
     
+    drawRect(app.renderer, &rectDrop, SDL_FALSE);
     drawRect(app.renderer, &rect, SDL_TRUE);
-    showText(app.renderer, BLACK, 60, 10, 30, "Drag & Drop image file");
+    showText(app.renderer, BLACK, 50, 10, 30, "Drag & Drop image file");
     showText(app.renderer, BLACK, 500, 10, 30, "Select Format");
+    showText(app.renderer, BLACK, WINDOW_WIDTH/2 + 250, WINDOW_HEIGHT - 20, 10, "By piteurcodeur 2024");
     changeColor (WHITE, app.renderer);
 
     font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
@@ -222,7 +226,7 @@ void doInput(void)
                 break;
 
             case SDL_DROPFILE:
-                if(isDropOnArea(&ptrP))
+                if(isDropOnArea(&ptrP, rectDrop))
                 {
                     
                     drop_file_dir = event.drop.file;
@@ -284,14 +288,10 @@ void cleanElt()
     destroyButton(&btnICO);
     destroyButton(&btnJPG);
     destroyButton(&btnPNG);
-    
+
     if (newFile != NULL) {
         SDL_free(newFile);
         newFile = NULL;
-    }
-    if (drop_file_dir != NULL) {
-        SDL_free(drop_file_dir);
-        drop_file_dir = NULL;
     }
 }
 
@@ -315,7 +315,7 @@ void fileDropped(char * drop_file_dir)
         char *msg = "> Extension : ";
         extension = strrchr(drop_file_dir, '.');
 
-        showText(app.renderer, RED, 100, 150, 24, "> Image loaded");
+        showText(app.renderer, BLACK, 100, 150, 24, "> Image loaded");
 
         size_t total_length = strlen(msg) + strlen(extension) + 1; // +1 pour le caractère nul
         //Buffer pour le message
@@ -326,7 +326,7 @@ void fileDropped(char * drop_file_dir)
         strcpy(buff, msg);
         strcat(buff, extension);
         
-        showText(app.renderer, BLACK, 100, 250, 20, buff);
+        showText(app.renderer, BLACK, 100, 250, 24, buff);
 
         //Nom du fichier ico créé
         newFile = malloc(strlen(drop_file_dir) * sizeof(char));
@@ -360,7 +360,7 @@ void presentScene(void)
 //Clean before leaving
 void cleanup()
 {
-    cleanElt();
+    //cleanElt();
     SDL_DestroyRenderer(app.renderer);
     SDL_DestroyWindow(app.window);
     SDL_Quit();

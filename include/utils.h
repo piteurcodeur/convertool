@@ -13,7 +13,7 @@ typedef struct
 
 
 void SDL_ExitWithError(const char *message);        
-SDL_bool isDropOnArea(PointerPos *_p);
+SDL_bool isDropOnArea(PointerPos *_p, SDL_Rect _rect);
 SDL_bool isImageFile(char *filename);
 void changeTypeName(char *filename, char* type);
 
