@@ -28,6 +28,7 @@ typedef struct {
 extern SDL_Color BLACK;
 extern SDL_Color WHITE;
 extern SDL_Color RED;
+extern SDL_Color GREEN;
 
 /**
  * @brief changer la couleur SDL active sur le rendu
@@ -90,4 +91,4 @@ Button createButton(SDL_Renderer* renderer, int fontSize, const char* text, int 
  */
 void drawButton(SDL_Renderer *renderer, const Button *button);
 
-#endif // BACKGROUND_H
+#endif; // BACKGROUND_H

@@ -81,7 +81,7 @@ int c_png2ico(char *input, char* output);
  * @param output Path to the output PNG image file
  * 
  */
-void c_jpg2png(char *input, char* output);
+int c_jpg2png(char *input, char* output);
 
 /**
  * @fn void c_png2jpg(char* input, char* output)
@@ -91,6 +91,6 @@ void c_jpg2png(char *input, char* output);
  * @param output Path to the output PNG image file
  * 
  */ 
-void c_png2jpg(char* input, char* output);
+int c_png2jpg(char* input, char* output);
 
 #endif //PNG2ICO_H

@@ -18,7 +18,7 @@ SDL_bool isImageFile(char *filename);
 void changeTypeName(char *filename, char* type);
 
 
-void convertFile(char *input, char* output, char* newType, char* actualType);
+int convertFile(char *input, char* output, char* newType, char* actualType);
 
-void c_jpg2ico(char* input, char* output);
+int c_jpg2ico(char* input, char* output);
 #endif // UTILS_H

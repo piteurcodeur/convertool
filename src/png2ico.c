@@ -18,14 +18,14 @@ int c_png2ico(char *input, char* output)
     unsigned char *img = stbi_load(input, &width, &height, &channels, 4);
     if (!img) {
         printf("Error loading image %s\n", input);
-        return 1;
+        return -1;
     }
 
     FILE *out = fopen(output, "wb");
     if (!out) {
         printf("Error creating output file %s\n", output);
         stbi_image_free(img);
-        return 1;
+        return -1;
     }
 
     ICONDIR icondir = {0, 1, 1};
@@ -53,7 +53,7 @@ int c_png2ico(char *input, char* output)
     return 0;
 }
 
-void c_jpg2png(char *input, char* output)
+int c_jpg2png(char *input, char* output)
 {
     
     int width, height, channels;
@@ -62,13 +62,14 @@ void c_jpg2png(char *input, char* output)
 
     if (img == NULL) {
         SDL_ExitWithError("Erreur lors du chargement de l'image\n");
+        return -1;
     }
 
     // Check that the image data is in the expected format
     if (channels != 3) {
         fprintf(stderr, "Error: image data is not in RGB format\n");
         stbi_image_free(img);
-        
+        return -1;
     }
 
     printf("Image chargée: largeur=%d, hauteur=%d, canaux=%d\n", width, height, channels);
@@ -77,19 +78,21 @@ void c_jpg2png(char *input, char* output)
         printf("Image sauvegardée sous 'output.png'\n");
     } else {
         printf("Erreur lors de la sauvegarde de l'image\n");
+        return -1;
     }
 
     stbi_image_free(img);
+    return 0;
 }
 
-void c_png2jpg(char* input, char* output)
+int c_png2jpg(char* input, char* output)
 {
     int width, height, channels;
     unsigned char *img = stbi_load(input, &width, &height, &channels, 0);
     
     if(img == NULL) {
         printf("Erreur lors du chargement de l'image\n");
-        return;
+        return -1;
     }
     
     // Convertir en RGB si l'image est en RGBA
@@ -109,9 +112,11 @@ void c_png2jpg(char* input, char* output)
     
     if(!success) {
         printf("Erreur lors de l'écriture de l'image JPG\n");
+        return -1;
     }
     
     stbi_image_free(img);
+    return 0;
 }
 
 #pragma pack(pop)

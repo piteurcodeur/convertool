@@ -276,7 +276,19 @@ void doInput(void)
 void handleButtonClick(Button2* btn, char* buttonName) {
     if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
         printf("Button %s clicked!\n", buttonName);
-        convertFile(drop_file_dir, newFile, buttonName, extension);
+        int v = convertFile(drop_file_dir, newFile, buttonName, extension);
+        if(v == 0)
+        {
+            showText(app.renderer, GREEN, 100, 350, 24, "Conversion success");
+        }
+        else if (v == -1)
+        {
+            showText(app.renderer, RED, 100, 350, 24,  "Error converting");
+        }
+        else if (v == -2)
+        {
+            showText(app.renderer, RED, 100, 350, 24,  "No converting");
+        }
     }
     
     btn->isPressed = false;
