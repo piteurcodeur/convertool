@@ -18,6 +18,7 @@
  */
 
 #define NUMBER_FPS 100
+#define APP_BACKGROUND_COLOR (SDL_Color){128, 128, 128, 255}
 
 
 void Create_Window(SDL_Window *win, SDL_Renderer *rend);
@@ -45,19 +46,29 @@ char *drop_file_dir = NULL;
 char *newFile = NULL;
 //extension du fichier drop
 char *extension = NULL;
+//message contenant l'extension
+char *message = NULL;
+
 //position du pointeur de souris
 PointerPos ptrP;
 //handle les evenements
 SDL_Event event;
 
+textInfo *titleLeft;
+textInfo *titleRight;
+textInfo *footer;
+
+
 Button2 btnPNG;
 Button2 btnICO;
 Button2 btnJPG;
 SDL_Rect rectDrop = {40, 60, WINDOW_WIDTH/2 - 2*40, WINDOW_HEIGHT - 2*60};
+SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
 
 TTF_Font *font;
 
 SDL_bool isfileDrop = SDL_FALSE;
+int isfileConvert = 1; 
 int tick, fps, tickStart, tickEnd, diffTicks = 0;
 
 
@@ -74,26 +85,19 @@ int main(int argc, char **argv)
     initSDL();
     atexit(cleanup);
 
-
-    //lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};
-    SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
-    
+    //lineCoord lineCoord1 = {WINDOW_WIDTH/2, 0, WINDOW_WIDTH/2, WINDOW_HEIGHT};    
     //SDL_Surface *MainSurface = createMainSurface(app.window);
-
+    
 
     /*---------------------Préparation de la fenetre----------------------------*/
 
-    prepareScene();
-    changeColor (BLACK, app.renderer);
+    //création des textes (titres et footer)
     
-    drawRect(app.renderer, &rectDrop, SDL_FALSE);
-    drawRect(app.renderer, &rect, SDL_TRUE);
-    showText(app.renderer, BLACK, 50, 10, 30, "Drag & Drop image file");
-    showText(app.renderer, BLACK, 500, 10, 30, "Select Format");
-    showText(app.renderer, BLACK, WINDOW_WIDTH/2 + 250, WINDOW_HEIGHT - 20, 10, "By piteurcodeur 2024");
-    changeColor (WHITE, app.renderer);
-
-    font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 20);
+    titleLeft = createTextTexture(app.renderer, BLACK, 50, 10, 30, "Drag & Drop image file");
+    titleRight = createTextTexture(app.renderer, BLACK, 500, 10, 30, "Select Format");
+    footer = createTextTexture(app.renderer, BLACK, WINDOW_WIDTH/2 + 250, WINDOW_HEIGHT - 20, 10, "By piteurcodeur 2024");
+    
+    font = getFont("C:/Windows/Fonts/arial.ttf", 20);
     btnPNG = createButton2(500, 100, 200, 50, "> PNG", font, 
                                    (SDL_Color){100, 100, 255, 255},  // Bleu clair
                                    (SDL_Color){255, 255, 255, 255},
@@ -276,21 +280,22 @@ void doInput(void)
 void handleButtonClick(Button2* btn, char* buttonName) {
     if (btn->isPressed && isPointInRect(event.button.x, event.button.y, &btn->rect)) {
         printf("Button %s clicked!\n", buttonName);
-        int v = convertFile(drop_file_dir, newFile, buttonName, extension);
-        if(v == 0)
-        {
-            showText(app.renderer, GREEN, 100, 350, 24, "Conversion success");
-        }
-        else if (v == -1)
-        {
-            showText(app.renderer, RED, 100, 350, 24,  "Error converting");
-        }
-        else if (v == -2)
-        {
-            showText(app.renderer, RED, 100, 350, 24,  "No converting");
-        }
-    }
+
+        isfileConvert = convertFile(drop_file_dir, newFile, buttonName, extension);
+
+        // Clear the entire screen with the background color
+        /*SDL_SetRenderDrawColor(app.renderer, 
+                               APP_BACKGROUND_COLOR.r, 
+                               APP_BACKGROUND_COLOR.g, 
+                               APP_BACKGROUND_COLOR.b, 
+                               APP_BACKGROUND_COLOR.a);
+                               */
+        //SDL_RenderClear(app.renderer);
     
+        // Update the screen
+        //presentScene();
+    }
+
     btn->isPressed = false;
 }
 
@@ -301,10 +306,7 @@ void cleanElt()
     destroyButton(&btnJPG);
     destroyButton(&btnPNG);
 
-    if (newFile != NULL) {
-        SDL_free(newFile);
-        newFile = NULL;
-    }
+    
 }
 
 
@@ -327,24 +329,24 @@ void fileDropped(char * drop_file_dir)
         char *msg = "> Extension : ";
         extension = strrchr(drop_file_dir, '.');
 
-        showText(app.renderer, BLACK, 100, 150, 24, "> Image loaded");
+        showText(app.renderer, createTextTexture(app.renderer, BLACK, 100, 150, 24, "> Image loaded"), SDL_FALSE);
 
         size_t total_length = strlen(msg) + strlen(extension) + 1; // +1 pour le caractère nul
         //Buffer pour le message
-        char *buff = (char *)malloc(total_length);
-        if (buff == NULL) {
+        message = (char *)malloc(total_length);
+        if (message == NULL) {
             fprintf(stderr, "Échec de l'allocation de mémoire\n");
         }
-        strcpy(buff, msg);
-        strcat(buff, extension);
+        strcpy(message, msg);
+        strcat(message, extension);
         
-        showText(app.renderer, BLACK, 100, 250, 24, buff);
+        showText(app.renderer, createTextTexture(app.renderer, BLACK, 100, 250, 24, message), SDL_FALSE);
+        
 
         //Nom du fichier ico créé
         newFile = malloc(strlen(drop_file_dir) * sizeof(char));
         strcpy(newFile, drop_file_dir);
         
-        free(buff);
     }
     else
     {
@@ -355,26 +357,91 @@ void fileDropped(char * drop_file_dir)
 //Change color and clear render
 void prepareScene(void)
 {
-    SDL_SetRenderDrawColor(app.renderer, 128, 128, 128, 255);
+    
+    changeColor(APP_BACKGROUND_COLOR, app.renderer);
+    //SDL_SetRenderDrawColor(app.renderer, 128, 128, 128, 255);
     SDL_RenderClear(app.renderer);
 }
 
 //Draw interactive elements and update screen
 void presentScene(void)
 {
+    prepareScene();
+
+
     
+
+    drawRect(app.renderer, &rectDrop, SDL_FALSE, BLACK);
+    drawRect(app.renderer, &rect, SDL_TRUE, BLACK);
+    
+    changeColor (WHITE, app.renderer);
+
     drawButton2(app.renderer, &btnICO);
     drawButton2(app.renderer, &btnPNG);
     drawButton2(app.renderer, &btnJPG);
+
+    // Show conversion result
+    if(isfileConvert == 0)
+    {
+        showText(app.renderer, createTextTexture(app.renderer, GREEN, 100, 350, 24, "Conversion success"), SDL_TRUE);
+    }
+    else if (isfileConvert == -1)
+    {
+        showText(app.renderer, createTextTexture(app.renderer, RED, 100, 350, 24,  "Error converting"), SDL_TRUE);
+    }
+    else if (isfileConvert == -2)
+    {
+        showText(app.renderer, createTextTexture(app.renderer, RED, 100, 350, 24,  "No converting"), SDL_TRUE);
+    }
+
+    if(isImageFile(drop_file_dir))
+    {
+        showText(app.renderer, createTextTexture(app.renderer, BLACK, 100, 150, 24, "> Image loaded"), SDL_TRUE);
+        showText(app.renderer, createTextTexture(app.renderer, BLACK, 100, 250, 24, message), SDL_TRUE);
+    }
+    showText(app.renderer, titleLeft, SDL_FALSE);
+    showText(app.renderer, titleRight, SDL_FALSE);
+    showText(app.renderer, footer, SDL_FALSE);
+
     SDL_RenderPresent(app.renderer);
 }
 
 //Clean before leaving
 void cleanup()
 {
-    //cleanElt();
-    SDL_DestroyRenderer(app.renderer);
-    SDL_DestroyWindow(app.window);
+
+    if (newFile != NULL) {
+        SDL_free(newFile);
+        newFile = NULL;
+    }
+
+    if (titleLeft && titleLeft->texture) {
+        SDL_DestroyTexture(titleLeft->texture);
+        free(titleLeft);
+    }
+    if (titleRight && titleRight->texture) {
+        SDL_DestroyTexture(titleRight->texture);
+        free(titleRight);
+    }
+    if (footer && footer->texture) {
+        SDL_DestroyTexture(footer->texture);
+        free(footer);
+    }
+    if (message) {
+        free(message);
+    }
+
+    
+    //cleanupFontCache();
+
+    if (app.renderer) {
+        SDL_DestroyRenderer(app.renderer);
+    }
+    if (app.window) {
+        SDL_DestroyWindow(app.window);
+    }
+    
+    TTF_Quit();
     SDL_Quit();
 }
 

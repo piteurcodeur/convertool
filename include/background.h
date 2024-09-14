@@ -30,6 +30,23 @@ extern SDL_Color WHITE;
 extern SDL_Color RED;
 extern SDL_Color GREEN;
 
+// Structure globale pour stocker les polices chargées
+typedef struct {
+    char* path;
+    int size;
+    TTF_Font* font;
+} FontCache;
+
+#define MAX_FONTS 10
+
+typedef struct
+{
+    SDL_Texture* texture;
+    SDL_Rect rect;
+
+} textInfo;
+
+
 /**
  * @brief changer la couleur SDL active sur le rendu
  * 
@@ -53,19 +70,15 @@ void drawline(SDL_Renderer *_rend, lineCoord _lc);
  * @param _rect structure de rectangle contenant les coordonnées
  * @param _fill le rectangle sera rempli de la couleur SDL actuelle si fill = true
  */
-void drawRect(SDL_Renderer *_rend, SDL_Rect *_rect, SDL_bool _fill);     
+void drawRect(SDL_Renderer *_rend, SDL_Rect *_rect, SDL_bool _fill, SDL_Color _color);     
 
 /**
- * @brief afficher un texte custom sur un renderer
+ * @brief Afficher le texte grace à la texture créée
  * 
- * @param renderer le rendu SDL
- * @param _color structure couleur RGBa du texte
- * @param X ordonnée
- * @param Y abscisse
- * @param fontSize taille du texte
- * @param texte texte à afficher
+ * @param renderer Renderer sur lequel afficher le texte
+ * @param _text Contient la texture et le rectangle de coordonnées
  */
-void showText(SDL_Renderer *renderer, SDL_Color _color, int X, int Y, int fontSize, char* texte);
+void showText(SDL_Renderer *renderer, textInfo* _text, SDL_bool dynamElt);
 
 /**
  * @brief Créer un objet Button
@@ -91,4 +104,22 @@ Button createButton(SDL_Renderer* renderer, int fontSize, const char* text, int 
  */
 void drawButton(SDL_Renderer *renderer, const Button *button);
 
-#endif; // BACKGROUND_H
+void clearText(SDL_Renderer* renderer, SDL_Color backgroundColor, int x, int y, int w, int h);
+TTF_Font* getFont(const char* path, int fontSize);
+
+/**
+ * @brief Create a Text Texture object
+ * 
+ * @param renderer 
+ * @param color 
+ * @param x 
+ * @param y 
+ * @param fontSize 
+ * @param text 
+ * @return textInfo* 
+ */
+textInfo* createTextTexture(SDL_Renderer *renderer, SDL_Color color, int x, int y, int fontSize, char *text);
+
+void cleanupFontCache();
+
+#endif // BACKGROUND_H

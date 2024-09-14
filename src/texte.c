@@ -44,7 +44,7 @@ SDL_Texture* renderText(SDL_Renderer* renderer, const char* text, TextStyle styl
                                  (style.italic ? TTF_STYLE_ITALIC : 0) | 
                                  (style.underline ? TTF_STYLE_UNDERLINE : 0));
 
-    SDL_Surface* surface = TTF_RenderText_Blended(style.font, text, style.color);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended(style.font, text, style.color);
     if (!surface) {
         printf("Erreur lors du rendu du texte: %s\n", TTF_GetError());
         return NULL;

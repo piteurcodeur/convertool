@@ -12,10 +12,13 @@ SDL_Color BLACK = {0,0,0,255};
 SDL_Color RED = {255,0,0,255};
 SDL_Color GREEN = {0,255,0,255};
 
+FontCache fontCache[MAX_FONTS] = {0};
+int fontCacheCount = 0;
+
 
 void changeColor(SDL_Color _color, SDL_Renderer *_rend)
 {
-    if (SDL_SetRenderDrawColor(_rend, _color.r, _color.g, _color.b, SDL_ALPHA_OPAQUE) != 0)
+    if (SDL_SetRenderDrawColor(_rend, _color.r, _color.g, _color.b, _color.a) != 0)
     {
         SDL_ExitWithError("unable to change the color");    
     }
@@ -31,8 +34,11 @@ void drawline(SDL_Renderer *_rend, lineCoord _lc)
     }
 }
 
-void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
+void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill, SDL_Color _color)
 {
+    //changeColor(_color, _rend);
+    SDL_SetRenderDrawColor(_rend, _color.r, _color.g, _color.b, _color.a);
+    SDL_SetRenderDrawBlendMode(_rend, SDL_BLENDMODE_BLEND);
     if (_fill)
     {
         if (SDL_RenderFillRect(_rend, _rect) != 0)
@@ -47,41 +53,7 @@ void drawRect(SDL_Renderer* _rend, SDL_Rect* _rect, SDL_bool _fill)
             SDL_ExitWithError("unable to draw rectangle");
         }
     }
-    
-    
 }
-
-
-void showText(SDL_Renderer *renderer, SDL_Color _color, int X, int Y, int fontSize, char* texte)
-{
-    //Color c = {56,56,125,100};
-    //create_texte(renderer, _color, X, Y, fontSize, texte);
-
-    TTF_Font* Font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", fontSize);
-    if (!Font) {
-        printf("Erreur de création de la police : %s\n", TTF_GetError());
-        TTF_Quit();
-        exit(1);
-    }
-
-    TextStyle style = {
-        .font = Font,
-        .color = _color, // Blanc
-        .size = fontSize,
-        .bold = false,
-        .italic = false,
-        .underline = false
-    };
-    SDL_Rect rect = {X, Y, 0, 0};
-    
-    SDL_Texture* textTexture = renderText(renderer, texte, style, &rect);
-        
-    if (textTexture) {
-        SDL_RenderCopy(renderer, textTexture, NULL, &rect);
-        SDL_DestroyTexture(textTexture);
-    }
-}
-
 
 
 // Fonction pour initialiser un bouton
@@ -130,4 +102,101 @@ void drawButton(SDL_Renderer* renderer, const Button* button) {
         SDL_Rect textRect = {button->rect.x, button->rect.y, button->rect.w, button->rect.h};
         SDL_RenderCopy(renderer, button->texture, NULL, &textRect);
     }
+}
+
+void clearText(SDL_Renderer* renderer, SDL_Color backgroundColor, int x, int y, int w, int h) {
+    SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+    SDL_Rect rect = {x, y, w, h};
+    if (SDL_RenderFillRect(renderer, &rect) != 0) {
+        SDL_ExitWithError("SDL_RenderFillRect Error");
+    }
+}
+
+
+// Fonction pour obtenir ou charger une police
+TTF_Font* getFont(const char* path, int fontSize) {
+    for (int i = 0; i < fontCacheCount; i++) {
+        if (strcmp(fontCache[i].path, path) == 0 && fontCache[i].size == fontSize) {
+            return fontCache[i].font;
+        }
+    }
+
+    if (fontCacheCount >= MAX_FONTS) {
+        printf("Erreur : Cache de polices plein\n");
+        return NULL;
+    }
+
+    TTF_Font* font = TTF_OpenFont(path, fontSize);
+    if (!font) {
+        printf("Erreur de chargement de la police : %s\n", TTF_GetError());
+        return NULL;
+    }
+
+    fontCache[fontCacheCount].path = strdup(path);
+    fontCache[fontCacheCount].size = fontSize;
+    fontCache[fontCacheCount].font = font;
+    fontCacheCount++;
+
+    return font;
+}
+
+textInfo* createTextTexture(SDL_Renderer *renderer, SDL_Color color, int x, int y, int fontSize, char* text) {
+    TTF_Font* font = getFont("C:/Windows/Fonts/arial.ttf", fontSize);
+    if (!font) {
+        return NULL;
+    }
+
+    TextStyle style = {
+        .font = font,
+        .color = color,
+        .size = fontSize,
+        .bold = false,
+        .italic = false,
+        .underline = false
+    };
+
+    SDL_Rect rect = {x, y, 0, 0};
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    
+    textInfo *_t = (textInfo*)malloc(sizeof(textInfo));
+    if (!_t) {
+        printf("Erreur: allocation mémoire échouée\n");
+        return NULL;
+    }
+
+    _t->texture = renderText(renderer, text, style, &rect);
+    if(!_t->texture)
+    {
+        printf("Erreur: création de texture échouée\n");
+        free(_t);
+        return NULL;
+    }
+    _t->rect = rect;
+
+    return _t;
+    
+}
+
+
+void showText(SDL_Renderer *renderer, textInfo* _text, SDL_bool dynamElt)
+{
+    if (_text && _text->texture) {
+        SDL_RenderCopy(renderer, _text->texture, NULL, &_text->rect);
+    } else {
+        printf("Erreur : texture ou structure textInfo invalide\n");
+    }
+    if(dynamElt)
+    {
+        SDL_DestroyTexture(_text->texture);
+    }
+}
+
+// Fonction pour libérer la mémoire du cache de polices
+void cleanupFontCache() {
+    printf("%d\n", fontCacheCount);
+    for (int i = 0; i < fontCacheCount; i++) {
+        TTF_CloseFont(fontCache[i].font);
+        //free(fontCache[i].path);
+    }
+    fontCacheCount = 0;
 }
