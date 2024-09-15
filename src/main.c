@@ -409,6 +409,7 @@ void presentScene(void)
 //Clean before leaving
 void cleanup()
 {
+    
 
     if (newFile != NULL) {
         SDL_free(newFile);
@@ -431,15 +432,17 @@ void cleanup()
         free(message);
     }
 
-    
-    //cleanupFontCache();
-
     if (app.renderer) {
         SDL_DestroyRenderer(app.renderer);
     }
     if (app.window) {
         SDL_DestroyWindow(app.window);
     }
+    
+
+    
+
+    //cleanupFontCache();
     
     TTF_Quit();
     SDL_Quit();

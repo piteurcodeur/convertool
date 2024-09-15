@@ -117,6 +117,7 @@ void clearText(SDL_Renderer* renderer, SDL_Color backgroundColor, int x, int y, 
 TTF_Font* getFont(const char* path, int fontSize) {
     for (int i = 0; i < fontCacheCount; i++) {
         if (strcmp(fontCache[i].path, path) == 0 && fontCache[i].size == fontSize) {
+            
             return fontCache[i].font;
         }
     }
@@ -136,7 +137,7 @@ TTF_Font* getFont(const char* path, int fontSize) {
     fontCache[fontCacheCount].size = fontSize;
     fontCache[fontCacheCount].font = font;
     fontCacheCount++;
-
+    
     return font;
 }
 
@@ -193,10 +194,10 @@ void showText(SDL_Renderer *renderer, textInfo* _text, SDL_bool dynamElt)
 
 // Fonction pour libérer la mémoire du cache de polices
 void cleanupFontCache() {
-    printf("%d\n", fontCacheCount);
     for (int i = 0; i < fontCacheCount; i++) {
-        TTF_CloseFont(fontCache[i].font);
-        //free(fontCache[i].path);
+        printf("Police %d - Chemin : %s, Adresse : %p, size : %d\n", 
+            i, 
+            fontCache[i].path ? fontCache[i].path : "NULL", 
+            (void*)fontCache[i].font, fontCache[i].size);
     }
-    fontCacheCount = 0;
 }
