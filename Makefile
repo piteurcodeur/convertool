@@ -29,30 +29,30 @@ all: $(BIN_DIR)/$(TARGET)
 
 # Règle pour la construction de l'exécutable
 $(BIN_DIR)/$(TARGET): $(OBJ_FILES) $(RES_FILE)
-	@echo "Linking..."
+	@echo "->   Linking..."
 	$(CC) -o $@ $^ $(LDFLAGS)
 	@echo "Build successful!"
 
 # Règle pour compiler les fichiers .c en .o
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.c
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
-	@echo "Compiling $<..."
+	@echo "->   Compiling $<..."
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Règle pour compiler le fichier .rc en .res
 $(RES_FILE): $(RC_FILE)
 	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
-	@echo "Compiling resource file..."
+	@echo "->   Compiling resource file..."
 	windres $< -O coff -o $@
 
 # Nettoyage des fichiers objets, de l'exécutable et du fichier .res
 clean:
-	@echo "Cleaning up..."
+	@echo "->   Cleaning up...
 	@if exist $(BIN_DIR)\*.o del /Q $(BIN_DIR)\*.o
 	@if exist $(BIN_DIR)\$(TARGET) del /Q $(BIN_DIR)\$(TARGET)
 	
 	
-	@echo "Clean complete!"
+	@echo "->  Clean complete!
 
 # @if exist $(RES_FILE) del /Q $(RES_FILE)
 # Indiquer au make de ne pas considérer ces règles comme des fichiers

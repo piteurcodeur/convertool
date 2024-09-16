@@ -146,10 +146,7 @@ int main(int argc, char **argv)
 
     
     /*-------------------------------------------------------------------------*/
-
-    SDL_DestroyRenderer(app.renderer);
-    SDL_DestroyWindow(app.window);
-    SDL_Quit();
+    
 
     return EXIT_SUCCESS;
 
@@ -224,8 +221,7 @@ void doInput(void)
         {
             case SDL_QUIT:
                 printf("Programme ferme\n");
-                TTF_Quit();
-                SDL_Quit();
+                
                 exit(0);
                 break;
 
@@ -409,8 +405,8 @@ void presentScene(void)
 //Clean before leaving
 void cleanup()
 {
+    cleanupFontCache();
     
-
     if (newFile != NULL) {
         SDL_free(newFile);
         newFile = NULL;
@@ -438,11 +434,6 @@ void cleanup()
     if (app.window) {
         SDL_DestroyWindow(app.window);
     }
-    
-
-    
-
-    //cleanupFontCache();
     
     TTF_Quit();
     SDL_Quit();
