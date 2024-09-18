@@ -62,6 +62,7 @@ textInfo *footer;
 Button2 btnPNG;
 Button2 btnICO;
 Button2 btnJPG;
+Button2 btnBMP;
 SDL_Rect rectDrop = {40, 60, WINDOW_WIDTH/2 - 2*40, WINDOW_HEIGHT - 2*60};
 SDL_Rect rect = {WINDOW_WIDTH/2, 0, 10, WINDOW_HEIGHT};
 
@@ -110,7 +111,10 @@ int main(int argc, char **argv)
                                    (SDL_Color){100, 100, 255, 255},  // Bleu clair
                                    (SDL_Color){255, 255, 255, 255},
                                    (SDL_Color){0, 255, 255, 255}); // Blanc
-    
+    btnBMP = createButton2(500, 400, 200, 50, "> BMP", font, 
+                                   (SDL_Color){100, 100, 255, 255},  // Bleu clair
+                                   (SDL_Color){255, 255, 255, 255},
+                                   (SDL_Color){0, 255, 255, 255}); // Blanc
 
     /*___________test text______________*/
     
@@ -250,6 +254,7 @@ void doInput(void)
                             btnICO.isPressed = isPointInRect(event.button.x, event.button.y, &btnICO.rect);
                             btnPNG.isPressed = isPointInRect(event.button.x, event.button.y, &btnPNG.rect);
                             btnJPG.isPressed = isPointInRect(event.button.x, event.button.y, &btnJPG.rect);  
+                            btnBMP.isPressed = isPointInRect(event.button.x, event.button.y, &btnBMP.rect);
                         }   
                     }                         
                 }
@@ -259,12 +264,14 @@ void doInput(void)
                     handleButtonClick(&btnICO, ".ico");
                     handleButtonClick(&btnPNG, ".png");
                     handleButtonClick(&btnJPG, ".jpg");
+                    handleButtonClick(&btnBMP, ".bmp");
                 }
                 break;
             case SDL_MOUSEMOTION:
                 btnICO.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnICO.rect);
                 btnPNG.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnPNG.rect);
-                btnJPG.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnJPG.rect);                
+                btnJPG.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnJPG.rect);     
+                btnBMP.isHovered = isPointInRect(event.motion.x, event.motion.y, &btnBMP.rect);            
                 break;
             default:
                 break;
@@ -278,7 +285,7 @@ void handleButtonClick(Button2* btn, char* buttonName) {
         printf("Button %s clicked!\n", buttonName);
 
         isfileConvert = convertFile(drop_file_dir, newFile, buttonName, extension);
-
+        printf("NewFile %s", newFile);
         // Clear the entire screen with the background color
         /*SDL_SetRenderDrawColor(app.renderer, 
                                APP_BACKGROUND_COLOR.r, 
@@ -301,6 +308,7 @@ void cleanElt()
     destroyButton(&btnICO);
     destroyButton(&btnJPG);
     destroyButton(&btnPNG);
+    destroyButton(&btnBMP);
 
     
 }
@@ -375,6 +383,7 @@ void presentScene(void)
     drawButton2(app.renderer, &btnICO);
     drawButton2(app.renderer, &btnPNG);
     drawButton2(app.renderer, &btnJPG);
+    drawButton2(app.renderer, &btnBMP);
 
     // Show conversion result
     if(isfileConvert == 0)

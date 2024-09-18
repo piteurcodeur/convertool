@@ -93,4 +93,50 @@ int c_jpg2png(char *input, char* output);
  */ 
 int c_png2jpg(char* input, char* output);
 
+/**
+ * @brief 
+ * 
+ * @param input 
+ * @param output 
+ * @return int 
+ */
+int c_jpg2bmp(char *input, char *output);
+
+/**
+ * @brief 
+ * 
+ * @param input 
+ * @param output 
+ * @return int 
+ */
+int c_png2bmp(char *input, char *output);
+
+/**
+ * @brief 
+ * 
+ * @param input 
+ * @param output 
+ * @return int 
+ */
+int c_ico2bmp(char *input, char *output);
+
+/**
+ * @brief 
+ * 
+ * @param input 
+ * @param output 
+ * @param quality 
+ * @return int 
+ */
+int c_ico2jpg(char *input, char *output, int quality);
+
+/**
+ * @brief 
+ * 
+ * @param input 
+ * @param output 
+ * @return int 
+ */
+int c_ico2png(char *input, char *output);
+
 #endif //PNG2ICO_H
