@@ -2,6 +2,8 @@
 #include <stb/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "stb/stb_image_resize2.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -371,6 +373,183 @@ int c_ico2bmp(char* input, char* output) {
     
     free(rgb_img);
     free(img);
+    return 0;
+}
+
+unsigned char* resize_image(unsigned char* input, int input_width, int input_height, int* output_width, int* output_height) {
+    const int max_size = 256;
+    float scale = fminf((float)max_size / input_width, (float)max_size / input_height);
+    *output_width = (int)(input_width * scale);
+    *output_height = (int)(input_height * scale);
+
+    unsigned char* output = malloc(*output_width * *output_height * 4);
+    if (!output) {
+        fprintf(stderr, "Erreur d'allocation mémoire pour l'image redimensionnée\n");
+        return NULL;
+    }
+
+    if (!stbir_resize(input, input_width, input_height, 0,
+                      output, *output_width, *output_height, 0,
+                      STBIR_RGBA, STBIR_TYPE_UINT8, STBIR_EDGE_CLAMP, STBIR_FILTER_BOX)) {
+        fprintf(stderr, "Erreur lors du redimensionnement de l'image\n");
+        free(output);
+        return NULL;
+    }
+
+    return output;
+}
+
+int c_bmp2ico(char* input, char* output) {
+    int width, height, channels;
+    unsigned char* img = stbi_load(input, &width, &height, &channels, 4); // Force RGBA
+    if (!img) {
+        fprintf(stderr, "Erreur lors du chargement de l'image BMP '%s'\n", input);
+        return -1;
+    }
+
+    // Redimensionner l'image si nécessaire
+    int new_width = width, new_height = height;
+    unsigned char* resized_img = img;
+    if (width > 256 || height > 256) {
+        printf("Redimensionnement de l'image de %dx%d à ", width, height);
+        resized_img = resize_image(img, width, height, &new_width, &new_height);
+        if (!resized_img) {
+            stbi_image_free(img);
+            return -1;
+        }
+        printf("%dx%d\n", new_width, new_height);
+    }
+
+    FILE* file = fopen(output, "wb");
+    if (!file) {
+        fprintf(stderr, "Impossible de créer le fichier ICO '%s'\n", output);
+        if (resized_img != img) free(resized_img);
+        stbi_image_free(img);
+        return -1;
+    }
+
+    // Calculer la taille totale de l'image
+    int row_size = ((new_width * 32 + 31) / 32) * 4;
+    int data_size = row_size * new_height;
+    int mask_size = ((new_width + 31) / 32) * 4 * new_height;
+    int total_size = sizeof(BITMAPINFOHEADER) + data_size + mask_size;
+
+    // Écrire l'en-tête ICONDIR
+    ICONDIR dir = {0, 1, 1};
+    fwrite(&dir, sizeof(ICONDIR), 1, file);
+
+    // Écrire l'entrée ICONDIRENTRY
+    ICONDIRENTRY entry = {
+        new_width == 256 ? 0 : new_width,
+        new_height == 256 ? 0 : new_height,
+        0, 0, 1, 32,
+        total_size,
+        sizeof(ICONDIR) + sizeof(ICONDIRENTRY)
+    };
+    fwrite(&entry, sizeof(ICONDIRENTRY), 1, file);
+
+    // Écrire l'en-tête BITMAPINFOHEADER
+    BITMAPINFOHEADER bih = {
+        sizeof(BITMAPINFOHEADER), new_width, new_height * 2, 1, 32, 0,
+        data_size, 0, 0, 0, 0
+    };
+    fwrite(&bih, sizeof(BITMAPINFOHEADER), 1, file);
+
+    // Écrire les données de l'image (inversées verticalement et en format BGRA)
+    unsigned char* temp_row = malloc(row_size);
+    for (int y = new_height - 1; y >= 0; y--) {
+        for (int x = 0; x < new_width; x++) {
+            int src_idx = (y * new_width + x) * 4;
+            int dst_idx = x * 4;
+            temp_row[dst_idx + 0] = resized_img[src_idx + 2]; // B
+            temp_row[dst_idx + 1] = resized_img[src_idx + 1]; // G
+            temp_row[dst_idx + 2] = resized_img[src_idx + 0]; // R
+            temp_row[dst_idx + 3] = resized_img[src_idx + 3]; // A
+        }
+        fwrite(temp_row, 1, row_size, file);
+    }
+    free(temp_row);
+
+    // Écrire le masque AND
+    unsigned char* mask = calloc(mask_size, 1);
+    for (int y = new_height - 1; y >= 0; y--) {
+        for (int x = 0; x < new_width; x++) {
+            int pixel_idx = (y * new_width + x) * 4;
+            int byte_idx = y * ((new_width + 7) / 8) + (x / 8);
+            int bit_idx = 7 - (x % 8);
+            if (resized_img[pixel_idx + 3] == 0) { // Si le pixel est complètement transparent
+                mask[byte_idx] |= (1 << bit_idx);
+            }
+        }
+    }
+    fwrite(mask, 1, mask_size, file);
+    free(mask);
+
+    fclose(file);
+    if (resized_img != img) free(resized_img);
+    stbi_image_free(img);
+
+    printf("Image ICO écrite avec succès : '%s'\n", output);
+    return 0;
+}
+
+
+int c_bmp2png(char* input, char* output) {
+    int width, height, channels;
+    unsigned char* img = stbi_load(input, &width, &height, &channels, 0);
+    if (!img) {
+        fprintf(stderr, "Erreur lors du chargement de l'image BMP '%s'\n", input);
+        return -1;
+    }
+
+    int success = stbi_write_png(output, width, height, channels, img, width * channels);
+    if (!success) {
+        fprintf(stderr, "Erreur lors de l'écriture de l'image PNG '%s'\n", output);
+        stbi_image_free(img);
+        return -1;
+    }
+
+    stbi_image_free(img);
+    printf("Image PNG écrite avec succès : '%s'\n", output);
+    return 0;
+}
+
+int c_bmp2jpg(char* input, char* output, int quality) {
+    int width, height, channels;
+    unsigned char* img = stbi_load(input, &width, &height, &channels, 0);
+    if (!img) {
+        fprintf(stderr, "Erreur lors du chargement de l'image BMP '%s'\n", input);
+        return -1;
+    }
+
+    // Si l'image a un canal alpha, on le supprime pour la conversion en JPG
+    unsigned char* rgb_img = img;
+    if (channels == 4) {
+        rgb_img = malloc(width * height * 3);
+        if (!rgb_img) {
+            fprintf(stderr, "Erreur d'allocation mémoire\n");
+            stbi_image_free(img);
+            return -1;
+        }
+        for (int i = 0, j = 0; i < width * height * 4; i += 4, j += 3) {
+            rgb_img[j] = img[i];
+            rgb_img[j + 1] = img[i + 1];
+            rgb_img[j + 2] = img[i + 2];
+        }
+        channels = 3;
+    }
+
+    int success = stbi_write_jpg(output, width, height, channels, rgb_img, quality);
+    if (!success) {
+        fprintf(stderr, "Erreur lors de l'écriture de l'image JPG '%s'\n", output);
+        if (rgb_img != img) free(rgb_img);
+        stbi_image_free(img);
+        return -1;
+    }
+
+    if (rgb_img != img) free(rgb_img);
+    stbi_image_free(img);
+    printf("Image JPG écrite avec succès : '%s'\n", output);
     return 0;
 }
 

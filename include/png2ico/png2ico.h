@@ -120,6 +120,12 @@ int c_png2bmp(char *input, char *output);
  */
 int c_ico2bmp(char *input, char *output);
 
+int c_bmp2ico(char *input, char *output);
+
+int c_bmp2png(char *input, char *output);
+
+int c_bmp2jpg(char *input, char *output, int quality);
+
 /**
  * @brief 
  * 

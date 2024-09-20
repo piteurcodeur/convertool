@@ -138,6 +138,18 @@ int convertFile(char *input, char* output, char* newType, char* actualType)
     {
         verif = c_ico2jpg(input, output, 90);
     }
+    else if (strcmp(actualType, ".bmp")==0 && strcmp(newType, ".ico")==0)
+    {
+        verif = c_bmp2ico(input, output);
+    }
+    else if (strcmp(actualType, ".bmp")==0 && strcmp(newType, ".png")==0)
+    {
+        verif = c_bmp2png(input, output);
+    }
+    else if (strcmp(actualType, ".bmp")==0 && strcmp(newType, ".jpg")==0)
+    {
+        verif = c_bmp2jpg(input, output, 90);
+    }
     else{
         return -2;
     }
