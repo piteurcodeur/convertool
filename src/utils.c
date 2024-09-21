@@ -84,8 +84,6 @@ int convertFile(char *input, char* output, char* newType, char* actualType)
     ico -> jpg
     ico -> bmp
 
-    To do:
-
     bmp -> ico
     bmp -> png
     bmp -> jpg
