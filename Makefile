@@ -19,6 +19,7 @@ RC_FILE = $(RES_DIR)/icon.rc
 RES_FILE = $(BIN_DIR)/icon.res
 
 # Options du compilateur
+DEBUG_FLAGS = -g
 CFLAGS = -I$(INCLUDE_DIR) -Wall
 
 # Options du linker
@@ -26,6 +27,9 @@ LDFLAGS = -L$(LIB_DIR) -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 # Règle par défaut
 all: $(BIN_DIR)/$(TARGET)
+
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: $(BIN_DIR)/$(TARGET)
 
 # Règle pour la construction de l'exécutable
 $(BIN_DIR)/$(TARGET): $(OBJ_FILES) $(RES_FILE)
