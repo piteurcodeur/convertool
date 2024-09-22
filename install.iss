@@ -11,7 +11,6 @@
    OutputBaseFilename=ConvertoolSetup
 
    [Files]
-
    ; Exécutable principal
    Source: ".\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 
@@ -35,4 +34,6 @@
    [Icons]
    Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
    Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+   Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+
    
