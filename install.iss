@@ -1,6 +1,6 @@
 #define MyAppName "Convertool"
    #define MyAppVersion "1.0"
-   #define MyAppExeName "prog.exe"
+   #define MyAppExeName "Convertool.exe"
 
    [Setup]
    AppName={#MyAppName}

@@ -1,5 +1,5 @@
 # Nom de l'exécutable
-TARGET = prog.exe
+TARGET = Convertool.exe
 
 # Répertoires
 SRC_DIR = src
