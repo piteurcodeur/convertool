@@ -236,7 +236,7 @@ void doInput(void)
                     drop_file_dir = event.drop.file;
                     isfileDrop = SDL_TRUE;
                     fileDropped(drop_file_dir);
-                    
+                    isfileConvert = 1;
                 }
                 else{
                     printf("Drop file outside of the area\n");
