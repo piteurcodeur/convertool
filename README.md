@@ -1,4 +1,4 @@
-# Convertisseur de Format d'Image
+# Convertool
 
 Ce projet est un logiciel de conversion de formats d'image développé en C utilisant la bibliothèque SDL2. Il permet de convertir des images entre différents formats couramment utilisés.
 
