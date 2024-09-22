@@ -20,12 +20,14 @@ RES_FILE = $(BIN_DIR)/icon.res
 
 # Options du compilateur
 DEBUG_FLAGS = -g
+HIDE_CONSOLE = -mwindows
 CFLAGS = -I$(INCLUDE_DIR) -Wall
 
 # Options du linker
 LDFLAGS = -L$(LIB_DIR) -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 # Règle par défaut
+all: LDFLAGS += $(HIDE_CONSOLE)
 all: $(BIN_DIR)/$(TARGET)
 
 debug: CFLAGS += $(DEBUG_FLAGS)
